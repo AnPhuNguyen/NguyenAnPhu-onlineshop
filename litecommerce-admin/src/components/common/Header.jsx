@@ -1,16 +1,26 @@
 // src/components/common/Header.jsx
-export default function Header() {
+// Header dùng để hiển thị nút toggle sidebar và menu người dùng.
+import { Link } from 'react-router-dom';
+
+export default function Header({ onToggleSidebar, onLogout }) {
     return (
         <nav className="app-header navbar navbar-expand bg-white">
             <div className="container-fluid">
-                <ul className="navbar-nav">
-                    <li className="nav-item">
-                        <a className="nav-link" data-widget="pushmenu" href="#" role="button">
+                <ul className="navbar-nav d-flex align-items-center">
+                    <li className="nav-item d-flex align-items-center me-3">
+                        {/* Nút toggle sidebar cho cả desktop/mobile */}
+                        <button
+                            className="nav-link btn btn-link p-0 d-flex align-items-center header-toggle-btn"
+                            type="button"
+                            onClick={onToggleSidebar}
+                            aria-label="Toggle sidebar"
+                        >
                             <i className="bi bi-list"></i>
-                        </a>
+                        </button>
                     </li>
-                    <li className="nav-item d-none d-sm-inline-block">
-                        <a href="/" className="nav-link">Trang chủ</a>
+                    {/* Link trang chủ */}
+                    <li className="nav-item d-none d-sm-inline-block d-flex align-items-center">
+                        <Link to="/" className="nav-link py-0">Trang chủ</Link>
                     </li>
                 </ul>
                 <ul className="navbar-nav ms-auto">
@@ -39,7 +49,7 @@ export default function Header() {
                             </li>
                             <li className="user-footer d-flex justify-content-between p-2">
                                 <a href="#" className="btn btn-default btn-flat">Profile</a>
-                                <a href="#" className="btn btn-default btn-flat">Đăng xuất</a>
+                                <button type="button" className="btn btn-default btn-flat" onClick={onLogout}>Đăng xuất</button>
                             </li>
                         </ul>
                     </li>

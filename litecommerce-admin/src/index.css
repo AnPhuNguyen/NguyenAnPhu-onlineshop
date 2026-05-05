@@ -25,24 +25,37 @@ body {
   background-color: #343a40;
   color: #c2c7d0;
   height: 100vh;
-  width: 250px;
+  width: 220px;
   position: fixed;
   top: 0;
   left: 0;
   padding-top: 3.5rem;
   z-index: 1033;
+  transition: transform 0.2s ease-in-out;
 }
 
 .app-main {
-  margin-left: 250px;
+  margin-left: 220px;
   padding: 1.5rem;
   flex: 1;
+  transition: margin-left 0.2s ease-in-out;
+}
+
+.app-footer {
+  margin-left: 220px;
+  transition: margin-left 0.2s ease-in-out;
+}
+
+.app-main.sidebar-collapsed,
+.app-footer.sidebar-collapsed {
+  margin-left: 0;
 }
 
 .nav-sidebar .nav-link {
   color: #c2c7d0;
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 0.75rem;
   border-radius: 0.25rem;
+  font-size: 0.92rem;
 }
 
 .nav-sidebar .nav-link:hover,
@@ -60,7 +73,7 @@ body {
   display: block;
   font-size: 1.25rem;
   line-height: 1.5;
-  padding: 0.8125rem 0.5rem;
+  padding: 0.65rem 0.5rem;
   white-space: nowrap;
   background-color: #343a40;
   color: #fff;
@@ -71,6 +84,70 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  width: 250px;
+  width: 220px;
   z-index: 1035;
+}
+
+.nav-link-group {
+  background-color: transparent;
+  color: #c2c7d0;
+}
+
+.nav-link-group:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.nav-treeview .nav-link {
+  padding-left: 1.75rem;
+}
+
+.nav-arrow {
+  transition: transform 0.2s ease-in-out;
+}
+
+.nav-arrow.expanded {
+  transform: rotate(90deg);
+}
+
+.app-sidebar.is-desktop.is-closed {
+  transform: translateX(-100%);
+}
+
+.sidebar {
+  padding-left: 0.4rem !important;
+  padding-right: 0.4rem !important;
+}
+
+.header-toggle-btn {
+  line-height: 1;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.app-sidebar.is-mobile {
+  transform: translateX(-100%);
+}
+
+.app-sidebar.is-mobile.is-open {
+  transform: translateX(0);
+}
+
+.app-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1032;
+}
+
+@media (max-width: 991.98px) {
+  .app-main,
+  .app-footer {
+    margin-left: 0;
+  }
+
+  .app-main {
+    padding: 1rem;
+  }
 }

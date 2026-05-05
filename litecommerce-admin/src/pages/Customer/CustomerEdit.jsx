@@ -8,10 +8,12 @@ export default function CustomerEdit() {
 
     return (
         <div>
+            {/* Toolbar trang thêm/sửa khách hàng */}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h4 className="mb-0">{isEditing ? 'Cập nhật khách hàng' : 'Bổ sung khách hàng'}</h4>
                 <Link to="/customers" className="btn btn-secondary"><i className="bi bi-arrow-left me-2"></i> Quay lại</Link>
             </div>
+            {/* Form cập nhật thông tin khách hàng */}
             <div className="card shadow-sm border-0">
                 <div className="card-body">
                     <form>

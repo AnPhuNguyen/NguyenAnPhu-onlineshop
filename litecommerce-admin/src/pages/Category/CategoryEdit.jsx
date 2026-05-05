@@ -7,10 +7,12 @@ export default function CategoryEdit() {
 
     return (
         <div>
+            {/* Toolbar trang thêm/sửa loại hàng */}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h4 className="mb-0">{isEditing ? 'Cập nhật loại hàng' : 'Bổ sung loại hàng'}</h4>
                 <Link to="/categories" className="btn btn-secondary"><i className="bi bi-arrow-left me-2"></i> Quay lại</Link>
             </div>
+            {/* Form thông tin loại hàng */}
             <div className="card shadow-sm border-0">
                 <div className="card-body">
                     <form>

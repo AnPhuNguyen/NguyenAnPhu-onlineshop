@@ -2,9 +2,11 @@
 export default function Dashboard() {
     return (
         <div>
+            {/* Tiêu đề trang dashboard */}
             <div className="app-content-header mb-4">
                 <h3 className="mb-0">Bảng điều khiển</h3>
             </div>
+            {/* Nhóm thẻ thống kê nhanh */}
             <div className="row">
                 <div className="col-lg-3 col-6">
                     <div className="card text-bg-primary mb-3 shadow-sm">

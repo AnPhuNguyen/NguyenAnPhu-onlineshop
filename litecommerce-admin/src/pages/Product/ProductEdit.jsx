@@ -7,12 +7,15 @@ export default function ProductEdit() {
 
     return (
         <div>
+            {/* Toolbar trang thêm/sửa mặt hàng */}
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h4 className="mb-0">{isEditing ? 'Cập nhật mặt hàng' : 'Bổ sung mặt hàng'}</h4>
                 <Link to="/products" className="btn btn-secondary">
                     <i className="bi bi-arrow-left me-2"></i> Quay lại
                 </Link>
             </div>
+
+            {/* Form thông tin cơ bản của mặt hàng */}
             <div className="card shadow-sm border-0">
                 <div className="card-body">
                     <form>
@@ -54,6 +57,17 @@ export default function ProductEdit() {
                             <label className="form-label">Ảnh mặt hàng</label>
                             <input type="file" className="form-control" />
                         </div>
+                        {/* Cụm dẫn xuất nhanh đến trang thuộc tính/ảnh sản phẩm */}
+                        {isEditing && (
+                            <div className="mb-3 d-flex flex-wrap gap-2">
+                                <Link to={`/products/attributes/${id}`} className="btn btn-outline-info">
+                                    <i className="bi bi-list-check me-2"></i> Quản lý thuộc tính
+                                </Link>
+                                <Link to={`/products/photos/${id}`} className="btn btn-outline-warning">
+                                    <i className="bi bi-images me-2"></i> Quản lý ảnh
+                                </Link>
+                            </div>
+                        )}
                         <div className="text-end mt-4">
                             <Link to="/products" className="btn btn-secondary me-2">Hủy</Link>
                             <button type="submit" className="btn btn-primary">
