@@ -1,10 +1,10 @@
 // src/pages/Checkout.jsx
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useCartStore } from '../store/cartStore';
-import { useAuthStore } from '../store/authStore';
-import { useOrderStore } from '../store/orderStore';
-import { PROVINCES } from '../data/mockData';
+import { useCartStore } from '../../store/cartStore';
+import { useAuthStore } from '../../store/authStore';
+import { useOrderStore } from '../../store/orderStore';
+import { PROVINCES } from '../../data/mockData';
 
 function formatPrice(price) {
     return price.toLocaleString('vi-VN') + '₫';

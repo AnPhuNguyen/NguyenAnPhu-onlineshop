@@ -1,8 +1,8 @@
 // src/pages/ProductList.jsx
 import { useState, useMemo } from 'react';
-import { PRODUCTS, CATEGORIES } from '../data/mockData';
-import ProductCard from '../components/common/ProductCard';
-import Pagination from '../components/common/Pagination';
+import { PRODUCTS, CATEGORIES } from '../../data/mockData';
+import ProductCard from '../../components/common/ProductCard';
+import Pagination from '../../components/common/Pagination';
 
 const PAGE_SIZE = 8;
 

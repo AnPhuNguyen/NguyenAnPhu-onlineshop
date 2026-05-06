@@ -1,9 +1,9 @@
 // src/pages/ProductDetail.jsx
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { PRODUCTS } from '../data/mockData';
-import { useCartStore } from '../store/cartStore';
-import { useAuthStore } from '../store/authStore';
+import { PRODUCTS } from '../../data/mockData';
+import { useCartStore } from '../../store/cartStore';
+import { useAuthStore } from '../../store/authStore';
 
 function formatPrice(price) {
     return price.toLocaleString('vi-VN') + '₫';

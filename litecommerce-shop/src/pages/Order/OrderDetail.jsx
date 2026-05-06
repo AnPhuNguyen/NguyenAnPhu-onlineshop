@@ -1,8 +1,8 @@
 // src/pages/OrderDetail.jsx
 import { Link, useParams, useLocation, useNavigate } from 'react-router-dom';
-import { useOrderStore } from '../store/orderStore';
-import { useAuthStore } from '../store/authStore';
-import OrderStatusBadge from '../components/common/OrderStatusBadge';
+import { useOrderStore } from '../../store/orderStore';
+import { useAuthStore } from '../../store/authStore';
+import OrderStatusBadge from '../../components/common/OrderStatusBadge';
 
 function formatPrice(price) {
     return price.toLocaleString('vi-VN') + '₫';

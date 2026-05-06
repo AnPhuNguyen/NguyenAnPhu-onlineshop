@@ -1,7 +1,7 @@
 // src/pages/Cart.jsx
 import { Link, useNavigate } from 'react-router-dom';
-import { useCartStore } from '../store/cartStore';
-import { useAuthStore } from '../store/authStore';
+import { useCartStore } from '../../store/cartStore';
+import { useAuthStore } from '../../store/authStore';
 
 function formatPrice(price) {
     return price.toLocaleString('vi-VN') + '₫';

@@ -3,18 +3,18 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
 
 // Auth pages (no layout)
-import Login from './pages/Login';
-import Register from './pages/Register';
-import ChangePassword from './pages/ChangePassword';
+import Login from './pages/Account/Login';
+import Register from './pages/Account/Register';
+import ChangePassword from './pages/Account/ChangePassword';
 
 // Shop pages (with layout)
-import ProductList from './pages/ProductList';
-import ProductDetail from './pages/ProductDetail';
-import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
-import OrderList from './pages/OrderList';
-import OrderDetail from './pages/OrderDetail';
-import Profile from './pages/Profile';
+import ProductList from './pages/Product/ProductList';
+import ProductDetail from './pages/Product/ProductDetail';
+import Cart from './pages/Cart/Cart';
+import Checkout from './pages/Cart/Checkout';
+import OrderList from './pages/Order/OrderList';
+import OrderDetail from './pages/Order/OrderDetail';
+import Profile from './pages/Account/Profile';
 
 export default function App() {
   return (

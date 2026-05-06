@@ -1,8 +1,8 @@
 // src/pages/Profile.jsx
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
-import { PROVINCES } from '../data/mockData';
+import { useAuthStore } from '../../store/authStore';
+import { PROVINCES } from '../../data/mockData';
 
 export default function Profile() {
     const { user, isAuthenticated, updateProfile } = useAuthStore();

@@ -1,11 +1,11 @@
 // src/pages/OrderList.jsx
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { useOrderStore } from '../store/orderStore';
-import { useAuthStore } from '../store/authStore';
-import { ORDER_STATUS } from '../data/mockData';
-import OrderStatusBadge from '../components/common/OrderStatusBadge';
-import Pagination from '../components/common/Pagination';
+import { useOrderStore } from '../../store/orderStore';
+import { useAuthStore } from '../../store/authStore';
+import { ORDER_STATUS } from '../../data/mockData';
+import OrderStatusBadge from '../../components/common/OrderStatusBadge';
+import Pagination from '../../components/common/Pagination';
 
 const PAGE_SIZE = 10;
 
