@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Param, Query, HttpCode, HttpStatus, Request, Body } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiParam } from '@nestjs/swagger';
+import { Controller, Get, Post, Param, HttpCode, HttpStatus, Request, Body, Query } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { ShopOrdersService } from './shop-orders.service';
 import { CreateOrderDto, OrderDetailDto, OrderSearchDto } from './dto/order.dto';
+import { ORDER_RESPONSES, PRODUCT_RESPONSES } from '../../common/constants/api-response';
 import { Roles } from '../../common/decorators/roles.decorator';
 
 /**
@@ -23,9 +24,9 @@ export class ShopOrdersController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Tạo đơn hàng mới' })
-  @ApiResponse({ status: 201, description: 'Tạo đơn hàng thành công' })
-  @ApiResponse({ status: 400, description: 'Giỏ hàng trống hoặc sản phẩm không hợp lệ' })
-  @ApiResponse({ status: 404, description: 'Không tìm thấy sản phẩm hoặc khách hàng' })
+  @ApiResponse(ORDER_RESPONSES.CREATE_ORDER_SUCCESS)
+  @ApiResponse(ORDER_RESPONSES.CART_EMPTY)
+  @ApiResponse(PRODUCT_RESPONSES.PRODUCT_NOT_FOUND)
   async createOrder(
     @Request() req: any,
     @Body() createOrderDto: CreateOrderDto,
@@ -42,17 +43,17 @@ export class ShopOrdersController {
    */
   @Get()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Lấy danh sách đơn hàng của khách hàng' })
-  @ApiResponse({ status: 200, description: 'Lấy danh sách đơn hàng thành công' })
-  @ApiQuery({ name: 'status', required: false, description: 'Lọc theo trạng thái đơn hàng' })
+  @ApiOperation({ summary: 'Lấy danh sách đơn hàng' })
+  @ApiResponse(ORDER_RESPONSES.GET_ORDERS_SUCCESS)
+  @ApiQuery({ name: 'status', required: false, description: 'Lọc theo trạng thái' })
   @ApiQuery({ name: 'page', required: false, description: 'Trang hiện tại' })
   @ApiQuery({ name: 'limit', required: false, description: 'Số lượng mỗi trang' })
-  async getCustomerOrders(
+  async getOrders(
     @Request() req: any,
-    @Query() searchDto: OrderSearchDto,
+    @Query() query: OrderSearchDto,
   ) {
     const userId = req.user.userId;
-    return this.shopOrdersService.getCustomerOrders(userId, searchDto);
+    return this.shopOrdersService.getCustomerOrders(userId, query);
   }
 
   /**
@@ -64,8 +65,8 @@ export class ShopOrdersController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Lấy chi tiết đơn hàng' })
-  @ApiResponse({ status: 200, description: 'Lấy chi tiết đơn hàng thành công' })
-  @ApiResponse({ status: 404, description: 'Không tìm thấy đơn hàng' })
+  @ApiResponse(ORDER_RESPONSES.GET_ORDER_SUCCESS)
+  @ApiResponse(ORDER_RESPONSES.ORDER_NOT_FOUND)
   @ApiParam({ name: 'id', description: 'ID đơn hàng' })
   async getOrderDetail(
     @Request() req: any,
@@ -84,9 +85,9 @@ export class ShopOrdersController {
   @Post(':id/cancel')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Hủy đơn hàng' })
-  @ApiResponse({ status: 200, description: 'Hủy đơn hàng thành công' })
-  @ApiResponse({ status: 403, description: 'Không thể hủy đơn hàng ở trạng thái này' })
-  @ApiResponse({ status: 404, description: 'Không tìm thấy đơn hàng' })
+  @ApiResponse(ORDER_RESPONSES.CANCEL_ORDER_SUCCESS)
+  @ApiResponse(ORDER_RESPONSES.CANNOT_CANCEL_ORDER)
+  @ApiResponse(ORDER_RESPONSES.ORDER_NOT_FOUND)
   @ApiParam({ name: 'id', description: 'ID đơn hàng' })
   async cancelOrder(
     @Request() req: any,

@@ -2,13 +2,14 @@ import { Injectable, ExecutionContext, UnauthorizedException } from '@nestjs/com
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { CanActivate } from '@nestjs/common';
 
 /**
  * Guard kiểm tra JWT token validity
  * Bất kỳ endpoint nào có decorator @Public() sẽ được bỏ qua
  */
 @Injectable()
-export class JwtAuthGuard {
+export class JwtAuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private reflector: Reflector,

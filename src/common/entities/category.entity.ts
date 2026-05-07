@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Product } from './product.entity';
 
 /**
  * Entity danh mục sản phẩm
@@ -24,4 +25,10 @@ export class Category {
    */
   @Column({ type: 'varchar', length: 255, nullable: true })
   description: string;
+
+  /**
+   * Danh sách sản phẩm thuộc danh mục này
+   */
+  @OneToMany(() => Product, product => product.category)
+  products: Product[];
 }

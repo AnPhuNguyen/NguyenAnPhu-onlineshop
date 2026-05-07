@@ -1,4 +1,5 @@
 import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import { AUTH_MESSAGES } from '../../common/constants/messages';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -33,7 +34,7 @@ export class ShopAuthService {
     });
 
     if (!customer) {
-      throw new UnauthorizedException('Email hoặc mật khẩu không đúng');
+      throw new UnauthorizedException(AUTH_MESSAGES.EMAIL_OR_PASSWORD_INVALID);
     }
 
     const payload = {
@@ -64,7 +65,7 @@ export class ShopAuthService {
     const { customerName, email, password, confirmPassword } = registerDto;
 
     if (password !== confirmPassword) {
-      throw new ConflictException('Mật khẩu xác nhận không khớp');
+      throw new ConflictException(AUTH_MESSAGES.PASSWORD_MISMATCH);
     }
 
     const existingCustomer = await this.customerRepository.findOne({
@@ -72,7 +73,7 @@ export class ShopAuthService {
     });
 
     if (existingCustomer) {
-      throw new ConflictException('Email đã tồn tại');
+      throw new ConflictException(AUTH_MESSAGES.EMAIL_ALREADY_EXISTS);
     }
 
     const hashedPassword = HashUtil.hashPassword(password);

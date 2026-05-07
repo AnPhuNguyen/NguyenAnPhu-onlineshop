@@ -7,6 +7,7 @@ import { Supplier } from '../../common/entities/supplier.entity';
 import { ProductAttribute } from '../../common/entities/product-attribute.entity';
 import { ProductPhoto } from '../../common/entities/product-photo.entity';
 import { ProductSearchDto, ProductDetailDto } from './dto/product.dto';
+import { PRODUCT_MESSAGES } from '../../common/constants/messages';
 
 /**
  * Service xử lý logic cho sản phẩm (shop)
@@ -93,7 +94,7 @@ export class ShopProductsService {
       .getOne();
 
     if (!product) {
-      throw new NotFoundException('Không tìm thấy sản phẩm');
+      throw new NotFoundException(PRODUCT_MESSAGES.NOT_FOUND);
     }
 
     return this.formatProduct(product);
@@ -104,14 +105,25 @@ export class ShopProductsService {
    * @returns Danh sách các danh mục đang có sản phẩm
    */
   async getCategories() {
-    const categories = await this.categoryRepository
-      .createQueryBuilder('category')
-      .leftJoin('category.products', 'product')
-      .where('product.isSelling = :isSelling', { isSelling: 1 })
-      .groupBy('category.categoryId')
-      .getMany();
-
-    return categories;
+    try {
+      console.log('Getting categories...');
+      
+      // Use raw SQL query to avoid TypeORM relation issues
+      const query = `
+        SELECT DISTINCT c.* 
+        FROM Categories c
+        INNER JOIN Products p ON c.CategoryID = p.CategoryID
+        WHERE p.isSelling = 1
+      `;
+      
+      const categories = await this.categoryRepository.query(query);
+      console.log('Categories with products found:', categories.length);
+      
+      return categories;
+    } catch (error) {
+      console.error('Error in getCategories:', error);
+      throw error;
+    }
   }
 
   /**

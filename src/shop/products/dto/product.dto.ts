@@ -1,5 +1,7 @@
 import { IsString, IsNumber, IsOptional, IsBoolean, Min, Max } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { VALIDATION_MESSAGES } from '../../../common/constants/messages';
 
 /**
  * DTO cho tìm kiếm và lọc sản phẩm
@@ -10,7 +12,7 @@ export class ProductSearchDto {
    */
   @ApiPropertyOptional({ example: 'iPhone' })
   @IsOptional()
-  @IsString()
+  @IsString({ message: VALIDATION_MESSAGES.INVALID_STRING })
   search?: string;
 
   /**
@@ -18,7 +20,8 @@ export class ProductSearchDto {
    */
   @ApiPropertyOptional({ example: 1 })
   @IsOptional()
-  @IsNumber()
+  @IsNumber({}, { message: VALIDATION_MESSAGES.INVALID_NUMBER })
+  @Type(() => Number)
   categoryId?: number;
 
   /**
@@ -26,8 +29,9 @@ export class ProductSearchDto {
    */
   @ApiPropertyOptional({ example: 1000000 })
   @IsOptional()
-  @IsNumber()
-  @Min(0)
+  @IsNumber({}, { message: VALIDATION_MESSAGES.INVALID_NUMBER })
+  @Min(0, { message: VALIDATION_MESSAGES.MIN_VALUE(0) })
+  @Type(() => Number)
   minPrice?: number;
 
   /**
@@ -35,8 +39,9 @@ export class ProductSearchDto {
    */
   @ApiPropertyOptional({ example: 50000000 })
   @IsOptional()
-  @IsNumber()
-  @Min(0)
+  @IsNumber({}, { message: VALIDATION_MESSAGES.INVALID_NUMBER })
+  @Min(0, { message: VALIDATION_MESSAGES.MIN_VALUE(0) })
+  @Type(() => Number)
   maxPrice?: number;
 
   /**
@@ -44,8 +49,9 @@ export class ProductSearchDto {
    */
   @ApiPropertyOptional({ example: 1 })
   @IsOptional()
-  @IsNumber()
-  @Min(1)
+  @IsNumber({}, { message: VALIDATION_MESSAGES.INVALID_NUMBER })
+  @Min(1, { message: VALIDATION_MESSAGES.MIN_VALUE(1) })
+  @Type(() => Number)
   page?: number;
 
   /**
@@ -53,9 +59,10 @@ export class ProductSearchDto {
    */
   @ApiPropertyOptional({ example: 10 })
   @IsOptional()
-  @IsNumber()
-  @Min(1)
-  @Max(100)
+  @IsNumber({}, { message: VALIDATION_MESSAGES.INVALID_NUMBER })
+  @Min(1, { message: VALIDATION_MESSAGES.MIN_VALUE(1) })
+  @Max(100, { message: VALIDATION_MESSAGES.MAX_VALUE(100) })
+  @Type(() => Number)
   limit?: number;
 }
 
@@ -67,6 +74,7 @@ export class ProductDetailDto {
    * ID sản phẩm
    */
   @ApiProperty({ example: 1 })
+  @IsNumber({}, { message: VALIDATION_MESSAGES.INVALID_NUMBER })
   productId: number;
 
   /**

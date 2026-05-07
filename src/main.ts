@@ -27,6 +27,21 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+      exceptionFactory: (errors) => {
+        const formattedErrors = errors.map(error => ({
+          field: error.property,
+          constraints: error.constraints,
+        }));
+        return {
+          success: false,
+          statusCode: 400,
+          message: 'Validation failed',
+          errors: formattedErrors,
+        };
+      },
     }),
   );
 

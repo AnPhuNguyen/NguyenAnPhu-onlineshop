@@ -3,6 +3,8 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { ShopAuthService } from './shop-auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { AUTH_RESPONSES } from '../../common/constants/api-response';
+import { Public } from '../../common/decorators/public.decorator';
 
 /**
  * Controller xử lý authentication cho khách hàng
@@ -19,10 +21,11 @@ export class ShopAuthController {
    * @returns JWT token và thông tin user
    */
   @Post('login')
+  @Public()
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Đăng nhập khách hàng' })
-  @ApiResponse({ status: 200, description: 'Đăng nhập thành công' })
-  @ApiResponse({ status: 401, description: 'Sai email hoặc mật khẩu' })
+  @ApiResponse(AUTH_RESPONSES.LOGIN_SUCCESS)
+  @ApiResponse(AUTH_RESPONSES.LOGIN_FAILED)
   async login(@Body() loginDto: LoginDto) {
     return this.shopAuthService.login(loginDto);
   }
@@ -33,10 +36,11 @@ export class ShopAuthController {
    * @returns Thông tin khách hàng đã tạo
    */
   @Post('register')
+  @Public()
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Đăng ký tài khoản khách hàng' })
-  @ApiResponse({ status: 201, description: 'Đăng ký thành công' })
-  @ApiResponse({ status: 409, description: 'Email đã tồn tại' })
+  @ApiResponse(AUTH_RESPONSES.REGISTER_SUCCESS)
+  @ApiResponse(AUTH_RESPONSES.EMAIL_EXISTS)
   async register(@Body() registerDto: RegisterDto) {
     return this.shopAuthService.register(registerDto);
   }

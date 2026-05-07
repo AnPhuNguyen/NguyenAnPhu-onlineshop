@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException, ForbiddenException } from '@nestjs/common';
+import { ORDER_MESSAGES, PRODUCT_MESSAGES, SUCCESS_MESSAGES } from '../../common/constants/messages';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
 import { Order } from '../entities/order.entity';
@@ -57,11 +58,11 @@ export class ShopOrdersService {
       });
 
       if (!product) {
-        throw new NotFoundException(`Sản phẩm ${item.productId} không tồn tại hoặc đã ngừng bán`);
+        throw new NotFoundException(PRODUCT_MESSAGES.NOT_AVAILABLE);
       }
 
       if (item.quantity <= 0) {
-        throw new BadRequestException(`Số lượng sản phẩm ${item.productId} phải lớn hơn 0`);
+        throw new BadRequestException('Số lượng sản phẩm phải lớn hơn 0');
       }
 
       totalAmount += product.price * item.quantity;
@@ -95,7 +96,7 @@ export class ShopOrdersService {
     }
 
     return {
-      message: 'Tạo đơn hàng thành công',
+      message: SUCCESS_MESSAGES.CREATE_SUCCESS,
       orderId: savedOrder.orderId,
       totalAmount,
     };
@@ -159,7 +160,7 @@ export class ShopOrdersService {
       .getOne();
 
     if (!order) {
-      throw new NotFoundException('Không tìm thấy đơn hàng');
+      throw new NotFoundException(ORDER_MESSAGES.NOT_FOUND);
     }
 
     return this.formatOrder(order);
@@ -177,18 +178,18 @@ export class ShopOrdersService {
     });
 
     if (!order) {
-      throw new NotFoundException('Không tìm thấy đơn hàng');
+      throw new NotFoundException(ORDER_MESSAGES.NOT_FOUND);
     }
 
     // Chỉ được hủy khi trạng thái là 1 (mới) hoặc 2 (đã chấp nhận)
     if (order.status !== 1 && order.status !== 2) {
-      throw new ForbiddenException('Không thể hủy đơn hàng ở trạng thái này');
+      throw new ForbiddenException(ORDER_MESSAGES.CANNOT_CANCEL);
     }
 
     // Cập nhật trạng thái thành -1 (đã hủy)
     await this.orderRepository.update({ orderId }, { status: -1 });
 
-    return { message: 'Hủy đơn hàng thành công' };
+    return { message: SUCCESS_MESSAGES.CREATE_SUCCESS };
   }
 
   /**
