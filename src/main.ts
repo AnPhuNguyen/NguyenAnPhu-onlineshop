@@ -56,7 +56,17 @@ async function bootstrap() {
     .setTitle('LiteCommerce API')
     .setDescription('API documentation for LiteCommerce e-commerce platform')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth', // This is the name of the security scheme
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

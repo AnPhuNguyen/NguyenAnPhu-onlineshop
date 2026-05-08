@@ -66,11 +66,24 @@ export const SUCCESS_MESSAGES = {
   DELETE_SUCCESS: 'Xóa thành công',
 } as const;
 
-// Error Messages
+/**
+ * Error messages chung
+ */
 export const ERROR_MESSAGES = {
   INTERNAL_SERVER_ERROR: 'Lỗi server nội bộ',
-  BAD_REQUEST: 'Yêu cầu không hợp lệ',
-  UNAUTHORIZED: 'Bạn chưa đăng nhập',
+  VALIDATION_ERROR: 'Lỗi validation',
+  UNAUTHORIZED: 'Không có quyền truy cập',
   FORBIDDEN: 'Bạn không có quyền truy cập',
   NOT_FOUND: 'Không tìm thấy tài nguyên',
-} as const;
+  CONFLICT: 'Xung đột tài nguyên',
+};
+
+/**
+ * Cart messages
+ */
+export const CART_MESSAGES = {
+  ITEM_NOT_FOUND: 'Sản phẩm không có trong giỏ hàng',
+  INVALID_QUANTITY: 'Số lượng phải lớn hơn 0',
+  PRODUCT_NOT_FOUND: 'Sản phẩm không tồn tại',
+  CART_EMPTY: 'Giỏ hàng trống',
+};

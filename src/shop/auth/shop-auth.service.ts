@@ -45,7 +45,7 @@ export class ShopAuthService {
     };
 
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload, { expiresIn: '7d' }),
       user: {
         userId: customer.customerId,
         email: customer.email,

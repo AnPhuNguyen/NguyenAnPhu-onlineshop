@@ -13,6 +13,7 @@ import { ShopAuthModule } from './shop/auth/shop-auth.module';
 import { ShopProductsModule } from './shop/products/shop-products.module';
 import { ShopOrdersModule } from './shop/orders/shop-orders.module';
 import databaseConfig from './config/database.config';
+import { ShopCartModule } from './shop/cart/shop-cart.module';
 
 /**
  * Module chính của ứng dụng
@@ -23,6 +24,7 @@ import databaseConfig from './config/database.config';
     // Cấu hình environment variables
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
       load: [databaseConfig],
     }),
 
@@ -36,11 +38,16 @@ import databaseConfig from './config/database.config';
     }),
 
     // Cấu hình JWT cho toàn ứng dụng
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'your-secret-key',
-      signOptions: {
-        expiresIn: (process.env.JWT_EXPIRATION || '7d') as any,
-      },
+    JwtModule.registerAsync({
+      global: true,
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        secret: process.env.JWT_SECRET || 'your-secret-key',
+        signOptions: {
+          expiresIn: (process.env.JWT_EXPIRATION || '7d') as any,
+        },
+      }),
+      inject: [ConfigService],
     }),
 
     // Cấu hình static files (uploads)
@@ -53,6 +60,7 @@ import databaseConfig from './config/database.config';
     ShopAuthModule,
     ShopProductsModule,
     ShopOrdersModule,
+    ShopCartModule,
   ],
   providers: [
     // Global guards
@@ -78,4 +86,4 @@ import databaseConfig from './config/database.config';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

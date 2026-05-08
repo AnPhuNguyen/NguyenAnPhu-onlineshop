@@ -257,8 +257,26 @@ export const COMMON_RESPONSES = {
    */
   CONFLICT: {
     status: 409,
-    description: 'Xung đột dữ liệu',
+    description: 'Xung đột tài nguyên',
   } as ApiResponseOptions,
+
+  /**
+   * Cart responses
+   */
+  CART_RESPONSES: {
+    GET_CART_SUCCESS: {
+      status: 200,
+      description: 'Lấy thông tin giỏ hàng thành công',
+    } as ApiResponseOptions,
+    ADD_TO_CART_SUCCESS: {
+      status: 200,
+      description: 'Thêm sản phẩm vào giỏ hàng thành công',
+    } as ApiResponseOptions,
+    PRODUCT_NOT_FOUND: {
+      status: 404,
+      description: 'Sản phẩm không tồn tại',
+    } as ApiResponseOptions,
+  },
 
   /**
    * Response cho internal server error chung

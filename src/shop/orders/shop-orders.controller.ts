@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Param, HttpCode, HttpStatus, Request, Body, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
 import { ShopOrdersService } from './shop-orders.service';
 import { CreateOrderDto, OrderDetailDto, OrderSearchDto } from './dto/order.dto';
 import { ORDER_RESPONSES, PRODUCT_RESPONSES } from '../../common/constants/api-response';
@@ -10,6 +10,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
  * Cung cấp endpoint quản lý đơn hàng của khách hàng
  */
 @ApiTags('shop-orders')
+@ApiBearerAuth('JWT-auth')
 @Controller('shop/orders')
 @Roles('customer')
 export class ShopOrdersController {
@@ -21,7 +22,7 @@ export class ShopOrdersController {
    * @param createOrderDto - Thông tin tạo đơn hàng
    * @returns Đơn hàng đã tạo
    */
-  @Post()
+  @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Tạo đơn hàng mới' })
   @ApiResponse(ORDER_RESPONSES.CREATE_ORDER_SUCCESS)
@@ -82,7 +83,7 @@ export class ShopOrdersController {
    * @param orderId - ID đơn hàng
    * @returns Thông báo hủy thành công
    */
-  @Post(':id/cancel')
+  @Post('cancel/:id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Hủy đơn hàng' })
   @ApiResponse(ORDER_RESPONSES.CANCEL_ORDER_SUCCESS)
