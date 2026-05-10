@@ -12,10 +12,6 @@ import { ShopAuthController } from './shop-auth.controller';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Customer]),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'your-secret-key',
-      signOptions: { expiresIn: '7d' },
-    }),
   ],
   controllers: [ShopAuthController],
   providers: [ShopAuthService],
