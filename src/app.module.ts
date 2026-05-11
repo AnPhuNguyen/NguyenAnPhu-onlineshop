@@ -14,6 +14,7 @@ import { ShopProductsModule } from './shop/products/shop-products.module';
 import { ShopOrdersModule } from './shop/orders/shop-orders.module';
 import databaseConfig from './config/database.config';
 import { ShopCartModule } from './shop/cart/shop-cart.module';
+import { ShopModule } from './shop/shop.module';
 
 /**
  * Module chính của ứng dụng
@@ -57,10 +58,7 @@ import { ShopCartModule } from './shop/cart/shop-cart.module';
     }),
 
     // Feature modules
-    ShopAuthModule,
-    ShopProductsModule,
-    ShopOrdersModule,
-    ShopCartModule,
+    ShopModule,
   ],
   providers: [
     // Global guards
