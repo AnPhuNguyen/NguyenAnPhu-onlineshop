@@ -1,8 +1,11 @@
 import { Module } from '@nestjs/common';
+import { AdminAuthModule } from './auth/admin-auth.module';
 
 /**
  * Admin module (nhánh /api/admin/*)
- * Hiện tại module con sẽ được bổ sung theo từng bước của kế hoạch.
  */
-@Module({})
+@Module({
+  imports: [AdminAuthModule],
+})
 export class AdminModule {}
+
