@@ -9,12 +9,9 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import { ShopAuthModule } from './shop/auth/shop-auth.module';
-import { ShopProductsModule } from './shop/products/shop-products.module';
-import { ShopOrdersModule } from './shop/orders/shop-orders.module';
 import databaseConfig from './config/database.config';
-import { ShopCartModule } from './shop/cart/shop-cart.module';
 import { ShopModule } from './shop/shop.module';
+import { AdminModule } from './admin/admin.module';
 
 /**
  * Module chính của ứng dụng
@@ -59,6 +56,7 @@ import { ShopModule } from './shop/shop.module';
 
     // Feature modules
     ShopModule,
+    AdminModule,
   ],
   providers: [
     // Global guards
