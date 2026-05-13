@@ -1,7 +1,8 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';
-
+import { AUTH_MESSAGES } from '../constants/messages';
+  
 /**
  * Guard kiểm tra quyền truy cập dựa trên role
  * Chỉ cho phép user có role phù hợp truy cập endpoint
@@ -22,11 +23,17 @@ export class RolesGuard implements CanActivate {
     if (!user) return false; // ← fix
 
     const userRoles = user.roles || [];
-    const hasRole = requiredRoles.some((role) => userRoles.includes(role));
+// also allow by userType (shop uses 'customer', admin uses 'employee')
+    const userType = typeof user.userType === 'string' ? user.userType : undefined;
+
+    const hasRole = requiredRoles.some((role) => {
+      return userRoles.includes(role) || (userType ? userType === role : false);
+    });
 
     if (!hasRole) {
-      throw new ForbiddenException('Insufficient permissions');
+      throw new ForbiddenException(AUTH_MESSAGES.ROLE_INVALID);
     }
+
 
     return true;
   }

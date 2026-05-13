@@ -15,9 +15,12 @@ export const AUTH_MESSAGES = {
   PASSWORD_TOO_SHORT: 'Mật khẩu phải có ít nhất 6 ký tự',
   
   // Token
-  TOKEN_NOT_FOUND: 'Token not found',
-  TOKEN_INVALID: 'Invalid or expired token',
-  TOKEN_EXPIRED: 'Token đã hết hạn',
+  TOKEN_NOT_FOUND: 'Token không tìm thấy được',
+  TOKEN_INVALID: 'Phiên đăng nhập không hợp lệ',
+  TOKEN_EXPIRED: 'Phiên đăng nhập đã hết hạn',
+
+  //Roles
+  ROLE_INVALID: 'Bạn không có quyền sử dụng chức năng này',
 } as const;
 
 // Customer Messages
