@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@ne
 import { ShopCartService } from './shop-cart.service';
 import { AddToCartDto, UpdateCartItemDto, CartResponseDto } from './dto/cart.dto';
 import { CART_RESPONSES } from '../../common/constants/api-response';
+import { Roles } from 'src/common/decorators/roles.decorator';
 
 /**
  * Controller xử lý API giỏ hàng cho khách hàng
@@ -10,6 +11,7 @@ import { CART_RESPONSES } from '../../common/constants/api-response';
  */
 @ApiTags('shop-cart')
 @ApiBearerAuth('JWT-auth')
+@Roles('customer')
 @Controller('shop/cart')
 export class ShopCartController {
   constructor(private shopCartService: ShopCartService) {}

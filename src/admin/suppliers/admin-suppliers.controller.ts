@@ -8,12 +8,12 @@ import { UpdateSupplierDto } from './dto/update-supplier.dto';
 
 @ApiTags('admin-suppliers')
 @ApiBearerAuth('JWT-auth')
+@Roles('employee', 'admin')
 @Controller('api/admin/suppliers')
 export class AdminSuppliersController {
   constructor(private readonly adminSuppliersService: AdminSuppliersService) {}
 
   @Get()
-  @Roles('employee')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Lấy danh sách nhà cung cấp' })
   @ApiResponse(ADMIN_SUPPLIERS_RESPONSES.GET_SUPPLIERS_SUCCESS)
@@ -26,7 +26,6 @@ export class AdminSuppliersController {
   }
 
   @Post()
-  @Roles('employee', 'admin')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Tạo nhà cung cấp mới' })
   @ApiResponse(ADMIN_SUPPLIERS_RESPONSES.CREATE_SUPPLIER_SUCCESS)
@@ -37,7 +36,6 @@ export class AdminSuppliersController {
   }
 
   @Put(':id')
-  @Roles('employee', 'admin')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Cập nhật nhà cung cấp' })
   @ApiResponse(ADMIN_SUPPLIERS_RESPONSES.UPDATE_SUPPLIER_SUCCESS)
@@ -52,7 +50,6 @@ export class AdminSuppliersController {
   }
 
   @Delete(':id')
-  @Roles('employee', 'admin')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Xóa nhà cung cấp' })
   @ApiResponse(ADMIN_SUPPLIERS_RESPONSES.DELETE_SUPPLIER_SUCCESS)

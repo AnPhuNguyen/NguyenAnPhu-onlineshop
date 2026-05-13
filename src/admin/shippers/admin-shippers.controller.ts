@@ -8,12 +8,12 @@ import { UpdateShipperDto } from './dto/update-shipper.dto';
 
 @ApiTags('admin-shippers')
 @ApiBearerAuth('JWT-auth')
+@Roles('employee', 'admin')
 @Controller('api/admin/shippers')
 export class AdminShippersController {
     constructor(private readonly adminShippersService: AdminShippersService) { }
 
     @Get()
-    @Roles('employee')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Lấy danh sách người giao hàng' })
     @ApiResponse(ADMIN_SHIPPERS_RESPONSES.GET_SHIPPERS_SUCCESS)
@@ -26,7 +26,6 @@ export class AdminShippersController {
     }
 
     @Post()
-    @Roles('employee', 'admin')
     @HttpCode(HttpStatus.CREATED)
     @ApiOperation({ summary: 'Tạo người giao hàng mới' })
     @ApiResponse(ADMIN_SHIPPERS_RESPONSES.CREATE_SHIPPER_SUCCESS)
@@ -37,7 +36,6 @@ export class AdminShippersController {
     }
 
     @Put(':id')
-    @Roles('employee', 'admin')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Cập nhật người giao hàng' })
     @ApiResponse(ADMIN_SHIPPERS_RESPONSES.UPDATE_SHIPPER_SUCCESS)
@@ -49,7 +47,6 @@ export class AdminShippersController {
     }
 
     @Delete(':id')
-    @Roles('employee', 'admin')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Xóa người giao hàng' })
     @ApiResponse(ADMIN_SHIPPERS_RESPONSES.DELETE_SHIPPER_SUCCESS)

@@ -4,6 +4,7 @@ import { Public } from '../../common/decorators/public.decorator';
 import { AUTH_RESPONSES, COMMON_RESPONSES } from '../../common/constants/api-response';
 import { AdminLoginDto } from './dto/login.dto';
 import { AdminAuthService } from './admin-auth.service';
+import { Roles } from 'src/common/decorators/roles.decorator';
 
 @ApiTags('admin-auth')
 @Controller('admin/auth')
@@ -22,6 +23,7 @@ export class AdminAuthController {
 
   @Post('logout')
   @ApiBearerAuth('JWT-auth')
+  @Roles('employee', 'admin')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Đăng xuất' })
   @ApiResponse(COMMON_RESPONSES.SUCCESS)

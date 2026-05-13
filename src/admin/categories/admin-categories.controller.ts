@@ -9,12 +9,12 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 
 @ApiTags('admin-categories')
 @ApiBearerAuth('JWT-auth')
+@Roles('employee', 'admin')
 @Controller('api/admin/categories')
 export class AdminCategoriesController {
     constructor(private readonly adminCategoriesService: AdminCategoriesService) { }
 
     @Get()
-    @Roles('employee')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Lấy danh sách danh mục' })
     @ApiResponse(ADMIN_CATEGORIES_RESPONSES.GET_CATEGORIES_SUCCESS)
@@ -27,7 +27,6 @@ export class AdminCategoriesController {
     }
 
     @Post()
-    @Roles('employee', 'admin')
     @HttpCode(HttpStatus.CREATED)
     @ApiOperation({ summary: 'Tạo danh mục mới' })
     @ApiResponse(ADMIN_CATEGORIES_RESPONSES.CREATE_CATEGORY_SUCCESS)
@@ -38,7 +37,6 @@ export class AdminCategoriesController {
     }
 
     @Put(':id')
-    @Roles('employee', 'admin')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Cập nhật danh mục' })
     @ApiResponse(ADMIN_CATEGORIES_RESPONSES.UPDATE_CATEGORY_SUCCESS)
@@ -50,7 +48,6 @@ export class AdminCategoriesController {
     }
 
     @Delete(':id')
-    @Roles('employee', 'admin')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Xóa danh mục' })
     @ApiResponse(ADMIN_CATEGORIES_RESPONSES.DELETE_CATEGORY_SUCCESS)
