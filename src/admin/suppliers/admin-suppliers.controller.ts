@@ -1,18 +1,22 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { ADMIN_SUPPLIERS_RESPONSES, COMMON_RESPONSES } from '../../common/constants/api-response';
 import { AdminSuppliersService } from './admin-suppliers.service';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
 
 @ApiTags('admin-suppliers')
-@ApiBearerAuth()
+@ApiBearerAuth('JWT-auth')
 @Controller('api/admin/suppliers')
 export class AdminSuppliersController {
   constructor(private readonly adminSuppliersService: AdminSuppliersService) {}
 
   @Get()
   @Roles('employee')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Lấy danh sách nhà cung cấp' })
+  @ApiResponse(ADMIN_SUPPLIERS_RESPONSES.GET_SUPPLIERS_SUCCESS)
   @ApiQuery({ name: 'search', required: false, description: 'Tìm nhà cung cấp theo tên' })
   async list(
     @Query('search')
@@ -23,6 +27,10 @@ export class AdminSuppliersController {
 
   @Post()
   @Roles('employee', 'admin')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Tạo nhà cung cấp mới' })
+  @ApiResponse(ADMIN_SUPPLIERS_RESPONSES.CREATE_SUPPLIER_SUCCESS)
+  @ApiResponse(COMMON_RESPONSES.BAD_REQUEST)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async create(@Body() dto: CreateSupplierDto) {
     return this.adminSuppliersService.create(dto);
@@ -30,6 +38,11 @@ export class AdminSuppliersController {
 
   @Put(':id')
   @Roles('employee', 'admin')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Cập nhật nhà cung cấp' })
+  @ApiResponse(ADMIN_SUPPLIERS_RESPONSES.UPDATE_SUPPLIER_SUCCESS)
+  @ApiResponse(ADMIN_SUPPLIERS_RESPONSES.SUPPLIER_NOT_FOUND)
+  @ApiResponse(COMMON_RESPONSES.BAD_REQUEST)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async update(
     @Param('id', ParseIntPipe) id: number,
@@ -40,6 +53,10 @@ export class AdminSuppliersController {
 
   @Delete(':id')
   @Roles('employee', 'admin')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Xóa nhà cung cấp' })
+  @ApiResponse(ADMIN_SUPPLIERS_RESPONSES.DELETE_SUPPLIER_SUCCESS)
+  @ApiResponse(ADMIN_SUPPLIERS_RESPONSES.SUPPLIER_NOT_FOUND)
   async remove(@Param('id', ParseIntPipe) id: number) {
     return this.adminSuppliersService.delete(id);
   }

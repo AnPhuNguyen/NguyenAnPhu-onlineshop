@@ -286,3 +286,132 @@ export const COMMON_RESPONSES = {
     description: 'Lỗi server nội bộ',
   } as ApiResponseOptions,
 } as const;
+
+// Admin Suppliers Response Options
+export const ADMIN_SUPPLIERS_RESPONSES = {
+  /**
+   * Response cho lấy danh sách nhà cung cấp thành công
+   */
+  GET_SUPPLIERS_SUCCESS: {
+    status: 200,
+    description: 'Lấy danh sách nhà cung cấp thành công',
+  } as ApiResponseOptions,
+
+  /**
+   * Response cho tạo nhà cung cấp thành công
+   */
+  CREATE_SUPPLIER_SUCCESS: {
+    status: 201,
+    description: 'Tạo nhà cung cấp thành công',
+  } as ApiResponseOptions,
+
+  /**
+   * Response cho cập nhật nhà cung cấp thành công
+   */
+  UPDATE_SUPPLIER_SUCCESS: {
+    status: 200,
+    description: 'Cập nhật nhà cung cấp thành công',
+  } as ApiResponseOptions,
+
+  /**
+   * Response cho xóa nhà cung cấp thành công
+   */
+  DELETE_SUPPLIER_SUCCESS: {
+    status: 200,
+    description: 'Xóa nhà cung cấp thành công',
+  } as ApiResponseOptions,
+
+  /**
+   * Response cho nhà cung cấp không tìm thấy
+   */
+  SUPPLIER_NOT_FOUND: {
+    status: 404,
+    description: 'Không tìm thấy nhà cung cấp',
+  } as ApiResponseOptions,
+} as const;
+
+// Admin Shippers Response Options
+export const ADMIN_SHIPPERS_RESPONSES = {
+  /**
+   * Response cho lấy danh sách người giao hàng thành công
+   */
+  GET_SHIPPERS_SUCCESS: {
+    status: 200,
+    description: 'Lấy danh sách người giao hàng thành công',
+  } as ApiResponseOptions,
+
+  /**
+   * Response cho tạo người giao hàng thành công
+   */
+  CREATE_SHIPPER_SUCCESS: {
+    status: 201,
+    description: 'Tạo người giao hàng thành công',
+  } as ApiResponseOptions,
+
+  /**
+   * Response cho cập nhật người giao hàng thành công
+   */
+  UPDATE_SHIPPER_SUCCESS: {
+    status: 200,
+    description: 'Cập nhật người giao hàng thành công',
+  } as ApiResponseOptions,
+
+  /**
+   * Response cho xóa người giao hàng thành công
+   */
+  DELETE_SHIPPER_SUCCESS: {
+    status: 200,
+    description: 'Xóa người giao hàng thành công',
+  } as ApiResponseOptions,
+
+  /**
+   * Response cho người giao hàng không tìm thấy
+   */
+  SHIPPER_NOT_FOUND: {
+    status: 404,
+    description: 'Không tìm thấy người giao hàng',
+  } as ApiResponseOptions,
+} as const;
+
+// Admin Categories Response Options
+export const ADMIN_CATEGORIES_RESPONSES = {
+  /**
+   * Response cho lấy danh sách danh mục thành công
+   */
+  GET_CATEGORIES_SUCCESS: {
+    status: 200,
+    description: 'Lấy danh sách danh mục thành công',
+  } as ApiResponseOptions,
+
+  /**
+   * Response cho tạo danh mục thành công
+   */
+  CREATE_CATEGORY_SUCCESS: {
+    status: 201,
+    description: 'Tạo danh mục thành công',
+  } as ApiResponseOptions,
+
+  /**
+   * Response cho cập nhật danh mục thành công
+   */
+  UPDATE_CATEGORY_SUCCESS: {
+    status: 200,
+    description: 'Cập nhật danh mục thành công',
+  } as ApiResponseOptions,
+
+  /**
+   * Response cho xóa danh mục thành công
+   */
+  DELETE_CATEGORY_SUCCESS: {
+    status: 200,
+    description: 'Xóa danh mục thành công',
+  } as ApiResponseOptions,
+
+  /**
+   * Response cho danh mục không tìm thấy
+   */
+  CATEGORY_NOT_FOUND: {
+    status: 404,
+    description: 'Không tìm thấy danh mục',
+  } as ApiResponseOptions,
+} as const;

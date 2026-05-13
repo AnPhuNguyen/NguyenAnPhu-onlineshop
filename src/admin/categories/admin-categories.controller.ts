@@ -1,20 +1,24 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { ADMIN_CATEGORIES_RESPONSES, COMMON_RESPONSES } from '../../common/constants/api-response';
 import { AdminCategoriesService } from './admin-categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
 
 @ApiTags('admin-categories')
-@ApiBearerAuth()
+@ApiBearerAuth('JWT-auth')
 @Controller('api/admin/categories')
 export class AdminCategoriesController {
     constructor(private readonly adminCategoriesService: AdminCategoriesService) { }
 
     @Get()
     @Roles('employee')
-    @ApiQuery({ name: 'search', required: false, description: 'tìm danh mục theo tên' })
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Lấy danh sách danh mục' })
+    @ApiResponse(ADMIN_CATEGORIES_RESPONSES.GET_CATEGORIES_SUCCESS)
+    @ApiQuery({ name: 'search', required: false, description: 'Tìm danh mục theo tên' })
     async list(
         @Query('search')
         search?: string,
@@ -24,6 +28,10 @@ export class AdminCategoriesController {
 
     @Post()
     @Roles('employee', 'admin')
+    @HttpCode(HttpStatus.CREATED)
+    @ApiOperation({ summary: 'Tạo danh mục mới' })
+    @ApiResponse(ADMIN_CATEGORIES_RESPONSES.CREATE_CATEGORY_SUCCESS)
+    @ApiResponse(COMMON_RESPONSES.BAD_REQUEST)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async create(@Body() dto: CreateCategoryDto) {
         return this.adminCategoriesService.create(dto);
@@ -31,6 +39,11 @@ export class AdminCategoriesController {
 
     @Put(':id')
     @Roles('employee', 'admin')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Cập nhật danh mục' })
+    @ApiResponse(ADMIN_CATEGORIES_RESPONSES.UPDATE_CATEGORY_SUCCESS)
+    @ApiResponse(ADMIN_CATEGORIES_RESPONSES.CATEGORY_NOT_FOUND)
+    @ApiResponse(COMMON_RESPONSES.BAD_REQUEST)
     @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
     async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateCategoryDto) {
         return this.adminCategoriesService.update(id, dto);
@@ -38,6 +51,10 @@ export class AdminCategoriesController {
 
     @Delete(':id')
     @Roles('employee', 'admin')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Xóa danh mục' })
+    @ApiResponse(ADMIN_CATEGORIES_RESPONSES.DELETE_CATEGORY_SUCCESS)
+    @ApiResponse(ADMIN_CATEGORIES_RESPONSES.CATEGORY_NOT_FOUND)
     async remove(@Param('id', ParseIntPipe) id: number) {
         return this.adminCategoriesService.delete(id);
     }
