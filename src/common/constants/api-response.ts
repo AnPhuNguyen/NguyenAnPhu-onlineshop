@@ -57,6 +57,41 @@ export const AUTH_RESPONSES = {
   } as ApiResponseOptions,
 } as const;
 
+/**
+ * Admin Product Response Options
+ */
+export const ADMIN_PRODUCTS_RESPONSES = {
+  GET_PRODUCTS_SUCCESS: {
+    status: 200,
+    description: 'Lấy danh sách sản phẩm thành công',
+  } as ApiResponseOptions,
+
+  GET_PRODUCT_SUCCESS: {
+    status: 200,
+    description: 'Lấy chi tiết sản phẩm thành công',
+  } as ApiResponseOptions,
+
+  CREATE_PRODUCT_SUCCESS: {
+    status: 201,
+    description: 'Tạo sản phẩm thành công',
+  } as ApiResponseOptions,
+
+  UPDATE_PRODUCT_SUCCESS: {
+    status: 200,
+    description: 'Cập nhật sản phẩm thành công',
+  } as ApiResponseOptions,
+
+  DELETE_PRODUCT_SUCCESS: {
+    status: 200,
+    description: 'Xóa sản phẩm thành công',
+  } as ApiResponseOptions,
+
+  PRODUCT_NOT_FOUND: {
+    status: 404,
+    description: 'Không tìm thấy sản phẩm',
+  } as ApiResponseOptions,
+} as const;
+
 // Product Response Options
 export const PRODUCT_RESPONSES = {
   /**
@@ -89,6 +124,66 @@ export const PRODUCT_RESPONSES = {
   GET_CATEGORIES_SUCCESS: {
     status: 200,
     description: 'Lấy danh mục sản phẩm thành công',
+  } as ApiResponseOptions,
+} as const;
+
+/**
+ * Admin Product Attributes Response Options
+ */
+export const ADMIN_PRODUCT_ATTRIBUTES_RESPONSES = {
+  GET_ATTRIBUTES_SUCCESS: {
+    status: 200,
+    description: 'Lấy danh sách thuộc tính sản phẩm thành công',
+  } as ApiResponseOptions,
+
+  CREATE_ATTRIBUTE_SUCCESS: {
+    status: 201,
+    description: 'Tạo thuộc tính sản phẩm thành công',
+  } as ApiResponseOptions,
+
+  UPDATE_ATTRIBUTE_SUCCESS: {
+    status: 200,
+    description: 'Cập nhật thuộc tính sản phẩm thành công',
+  } as ApiResponseOptions,
+
+  DELETE_ATTRIBUTE_SUCCESS: {
+    status: 200,
+    description: 'Xóa thuộc tính sản phẩm thành công',
+  } as ApiResponseOptions,
+
+  ATTRIBUTE_NOT_FOUND: {
+    status: 404,
+    description: 'Không tìm thấy thuộc tính sản phẩm',
+  } as ApiResponseOptions,
+} as const;
+
+/**
+ * Admin Product Photos Response Options
+ */
+export const ADMIN_PRODUCT_PHOTOS_RESPONSES = {
+  GET_PHOTOS_SUCCESS: {
+    status: 200,
+    description: 'Lấy danh sách ảnh sản phẩm thành công',
+  } as ApiResponseOptions,
+
+  CREATE_PHOTO_SUCCESS: {
+    status: 201,
+    description: 'Thêm ảnh sản phẩm thành công',
+  } as ApiResponseOptions,
+
+  UPDATE_PHOTO_SUCCESS: {
+    status: 200,
+    description: 'Cập nhật ảnh sản phẩm thành công',
+  } as ApiResponseOptions,
+
+  DELETE_PHOTO_SUCCESS: {
+    status: 200,
+    description: 'Xóa ảnh sản phẩm thành công',
+  } as ApiResponseOptions,
+
+  PHOTO_NOT_FOUND: {
+    status: 404,
+    description: 'Không tìm thấy ảnh sản phẩm',
   } as ApiResponseOptions,
 } as const;
 

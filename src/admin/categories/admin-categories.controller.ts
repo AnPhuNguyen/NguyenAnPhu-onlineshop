@@ -10,7 +10,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 @ApiTags('admin-categories')
 @ApiBearerAuth('JWT-auth')
 @Roles('employee', 'admin')
-@Controller('api/admin/categories')
+@Controller('admin/categories')
 export class AdminCategoriesController {
     constructor(private readonly adminCategoriesService: AdminCategoriesService) { }
 

@@ -9,7 +9,7 @@ import { UpdateShipperDto } from './dto/update-shipper.dto';
 @ApiTags('admin-shippers')
 @ApiBearerAuth('JWT-auth')
 @Roles('employee', 'admin')
-@Controller('api/admin/shippers')
+@Controller('admin/shippers')
 export class AdminShippersController {
     constructor(private readonly adminShippersService: AdminShippersService) { }
 

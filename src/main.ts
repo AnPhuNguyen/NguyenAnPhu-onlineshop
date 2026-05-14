@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
@@ -30,17 +30,19 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true,
       },
+
       exceptionFactory: (errors) => {
         const formattedErrors = errors.map(error => ({
           field: error.property,
           constraints: error.constraints,
         }));
-        return {
+
+        return new BadRequestException({
           success: false,
           statusCode: 400,
           message: 'Validation failed',
           errors: formattedErrors,
-        };
+        });
       },
     }),
   );
@@ -69,13 +71,15 @@ async function bootstrap() {
     )
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config, {
+    deepScanRoutes: true,
+  });
   SwaggerModule.setup('api/docs', app, document);
 
   // Start server
   const port = configService.get<number>('PORT') || 3000;
   await app.listen(port);
-  
+
   console.log(`🚀 Application is running on: http://localhost:${port}`);
   console.log(`📚 Swagger documentation available at: http://localhost:${port}/api/docs`);
 }
