@@ -38,18 +38,19 @@ export class AdminAuthService {
         throw new UnauthorizedException(AUTH_MESSAGES.EMAIL_OR_PASSWORD_INVALID);
       }
 
-      const roles = this.parseRoles(employee.roleNames);
+      const roleNames = this.parseRoles(employee.roleNames);
 
       // Rule: chỉ cho phép đăng nhập nếu roleNames chứa đúng employee/admin
-      const allowed = roles.includes('employee') || roles.includes('admin');
+      const allowed = roleNames.includes('employee') || roleNames.includes('admin');
       if (!allowed) {
         throw new UnauthorizedException(AUTH_MESSAGES.INVALID_CREDENTIALS);
       }
 
+      // RolesGuard đang check user.roles (string[])
       const payload = {
         userId: employee.employeeId,
         email: employee.email,
-        roles,
+        roles: roleNames,
         userType: 'employee',
         fullName: employee.fullName,
       };
@@ -59,7 +60,7 @@ export class AdminAuthService {
         user: {
           userId: employee.employeeId,
           email: employee.email,
-          roles,
+          roles: roleNames,
           userType: 'employee',
           fullName: employee.fullName,
         },

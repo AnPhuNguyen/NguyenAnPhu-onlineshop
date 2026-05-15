@@ -5,6 +5,8 @@ import { AdminSuppliersModule } from './suppliers/admin-suppliers.module';
 import { AdminShippersModule } from './shippers/admin-shippers.module';
 import { AdminProductsModule } from './products/admin-products.module';
 import { AdminProductAttributesModule } from './product-attributes/admin-product-attributes.module';
+import { AdminEmployeesModule } from './employees/admin-employees.module';
+import { AdminCustomersModule } from './customers/admin-customers.module';
 
 /**
  * Admin module (nhánh /api/admin/*)
@@ -15,6 +17,8 @@ import { AdminProductAttributesModule } from './product-attributes/admin-product
     AdminCategoriesModule,
     AdminSuppliersModule,
     AdminShippersModule,
+    AdminEmployeesModule,
+    AdminCustomersModule,
     AdminProductsModule,
     AdminProductAttributesModule,
   ],
