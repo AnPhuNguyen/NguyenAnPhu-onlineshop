@@ -7,6 +7,8 @@ import { AdminProductsModule } from './products/admin-products.module';
 import { AdminProductAttributesModule } from './product-attributes/admin-product-attributes.module';
 import { AdminEmployeesModule } from './employees/admin-employees.module';
 import { AdminCustomersModule } from './customers/admin-customers.module';
+import { AdminCartModule } from './cart/admin-cart.module';
+import { AdminOrdersModule } from './orders/admin-orders.module';
 
 /**
  * Admin module (nhánh /api/admin/*)
@@ -21,6 +23,8 @@ import { AdminCustomersModule } from './customers/admin-customers.module';
     AdminCustomersModule,
     AdminProductsModule,
     AdminProductAttributesModule,
+    AdminCartModule,
+    AdminOrdersModule,
   ],
 })
 export class AdminModule {}
