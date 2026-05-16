@@ -67,6 +67,7 @@ export const SUCCESS_MESSAGES = {
   CREATE_SUCCESS: 'Tạo thành công',
   UPDATE_SUCCESS: 'Cập nhật thành công',
   DELETE_SUCCESS: 'Xóa thành công',
+  CANCEL_SUCCESS: 'Hủy thành công',
 } as const;
 
 /**

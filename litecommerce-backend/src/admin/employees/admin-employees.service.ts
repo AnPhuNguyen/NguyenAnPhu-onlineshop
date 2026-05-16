@@ -1,6 +1,6 @@
 import { Injectable, BadRequestException, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { Employee } from '../../common/entities/employee.entity';
 import { HashUtil } from '../../common/utils/hash.util';
 import { ResetEmployeePasswordDto } from './dto/reset-employee-password.dto';
@@ -8,13 +8,14 @@ import { ChangeEmployeeRoleDto } from './dto/change-employee-role.dto';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeeQueryDto } from './dto/employee-query.dto';
+import { SUCCESS_MESSAGES } from '../../common/constants/messages';
 
 @Injectable()
 export class AdminEmployeesService {
   constructor(
     @InjectRepository(Employee)
     private employeeRepository: Repository<Employee>,
-  ) {}
+  ) { }
 
   private parseRoles(roleNames: string): string[] {
     if (!roleNames) return [];
@@ -22,7 +23,6 @@ export class AdminEmployeesService {
   }
 
   private toRoleNames(roles: string[]): string {
-    // business: chỉ cho phép employee | employee,admin
     const set = new Set(roles);
     const allowed = ['employee', 'admin'];
     for (const r of set) {
@@ -31,7 +31,6 @@ export class AdminEmployeesService {
       }
     }
 
-    // Nếu có admin => employee,admin
     if (set.has('admin')) return 'employee,admin';
     return 'employee';
   }
@@ -39,20 +38,11 @@ export class AdminEmployeesService {
   async getEmployees(query: EmployeeQueryDto) {
     const { keyword, role, workingStatus, page = 1, limit = 10 } = query;
 
-    const where: any = {};
-
-    if (keyword) {
-      where.fullName = { ...(where.fullName ?? {}), // placeholder
-      };
-    }
-
-    // TypeORM simple filters (repo dùng find + Like là đủ cho V1)
     const findWhere: any = {};
     if (keyword) {
-      findWhere.fullName = ILike(`%${keyword}%`);
+      findWhere.fullName = Like(`%${keyword}%`);
     }
     if (role) {
-      // role filter theo role string trong DB
       findWhere.roleNames = role;
     }
     if (workingStatus) {
@@ -64,7 +54,7 @@ export class AdminEmployeesService {
       skip: (page - 1) * limit,
       take: limit,
       order: { employeeId: 'DESC' },
-    } as any);
+    });
 
     const mapped = items.map((e) => ({
       id: e.employeeId,
@@ -104,7 +94,6 @@ export class AdminEmployeesService {
     const exists = await this.employeeRepository.findOne({ where: { email: dto.email } });
     if (exists) throw new ConflictException('Email đã tồn tại');
 
-    // UI admin có thể chưa gửi password => tạo mật khẩu mặc định
     const password = dto.password ?? '123456';
 
     const employee = this.employeeRepository.create({
@@ -114,14 +103,13 @@ export class AdminEmployeesService {
       email: dto.email,
       password: HashUtil.hashPassword(password),
       address: dto.address,
-photo: undefined,
       isWorking: 1,
       roleNames: 'employee',
     });
 
     await this.employeeRepository.save(employee);
 
-    return { message: 'Tạo nhân viên thành công', id: employee.employeeId };
+    return { message: SUCCESS_MESSAGES.CREATE_SUCCESS, id: employee.employeeId };
   }
 
   async updateEmployee(id: number, dto: UpdateEmployeeDto) {
@@ -134,20 +122,24 @@ photo: undefined,
     employee.address = dto.address ?? employee.address;
 
     if (dto.isWorking !== undefined) {
-      // Accept boolean or 0/1
       employee.isWorking = typeof dto.isWorking === 'boolean' ? (dto.isWorking ? 1 : 0) : Number(dto.isWorking);
     }
 
     await this.employeeRepository.save(employee);
-    return { message: 'Cập nhật nhân viên thành công' };
+    return { message: SUCCESS_MESSAGES.UPDATE_SUCCESS };
   }
 
   async deleteEmployee(id: number) {
     const employee = await this.employeeRepository.findOne({ where: { employeeId: id } });
     if (!employee) throw new NotFoundException('Không tìm thấy nhân viên');
 
-    await this.employeeRepository.delete({ employeeId: id });
-    return { message: 'Xóa nhân viên thành công' };
+    // Chú ý: Cần kiểm tra ràng buộc EmployeeID trong bảng Orders trước khi xóa
+    try {
+      await this.employeeRepository.delete({ employeeId: id });
+      return { message: SUCCESS_MESSAGES.DELETE_SUCCESS };
+    } catch (e) {
+      throw new BadRequestException('Không thể xóa nhân viên này vì đã có dữ liệu đơn hàng liên quan (thay vào đó hãy đặt trạng thái ngừng làm việc)');
+    }
   }
 
   async changeRole(id: number, dto: ChangeEmployeeRoleDto) {
@@ -156,7 +148,6 @@ photo: undefined,
 
     const roleNames = dto.roleNames;
 
-    // validate theo guide
     if (roleNames !== 'employee' && roleNames !== 'employee,admin') {
       throw new ForbiddenException('Bạn không có quyền sử dụng role này');
     }
@@ -164,7 +155,7 @@ photo: undefined,
     employee.roleNames = roleNames;
     await this.employeeRepository.save(employee);
 
-    return { message: 'Đổi quyền thành công' };
+    return { message: SUCCESS_MESSAGES.UPDATE_SUCCESS };
   }
 
   async changePassword(id: number, dto: ResetEmployeePasswordDto) {
@@ -178,14 +169,8 @@ photo: undefined,
     employee.password = HashUtil.hashPassword(dto.newPassword);
     await this.employeeRepository.save(employee);
 
-    return { message: 'Đổi mật khẩu thành công' };
+    return { message: SUCCESS_MESSAGES.UPDATE_SUCCESS };
   }
-}
-
-// helper for ILike for case-insensitive search
-// NOTE: tạm thời dùng biểu diễn object để tránh phụ thuộc typeorm
-function ILike(pattern: string) {
-  return { $ilike: pattern } as any;
 }
 
 

@@ -2,10 +2,11 @@ import { Injectable, NotFoundException, BadRequestException, ForbiddenException 
 import { ORDER_MESSAGES, PRODUCT_MESSAGES, SUCCESS_MESSAGES } from '../../common/constants/messages';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
-import { Order } from '../entities/order.entity';
+import { Order } from '../../common/entities/order.entity';
 import { OrderDetail } from '../../common/entities/order-detail.entity';
 import { Product } from '../../common/entities/product.entity';
 import { Customer } from '../../common/entities/customer.entity';
+import { Province } from '../../common/entities/province.entity';
 import { CreateOrderDto, OrderDetailDto, OrderSearchDto } from './dto/order.dto';
 
 /**
@@ -23,7 +24,9 @@ export class ShopOrdersService {
     private productRepository: Repository<Product>,
     @InjectRepository(Customer)
     private customerRepository: Repository<Customer>,
-  ) {}
+    @InjectRepository(Province)
+    private provinceRepository: Repository<Province>,
+  ) { }
 
   /**
    * Tạo đơn hàng mới từ giỏ hàng
@@ -46,6 +49,15 @@ export class ShopOrdersService {
 
     if (!customer) {
       throw new NotFoundException('Không tìm thấy thông tin khách hàng');
+    }
+
+    // Kiểm tra ràng buộc tỉnh thành
+    const provinceToValidate = deliveryProvince || customer.province;
+    if (provinceToValidate) {
+      const provinceExists = await this.provinceRepository.findOne({ where: { provinceName: provinceToValidate } });
+      if (!provinceExists) {
+        throw new BadRequestException(`Tỉnh/Thành phố "${provinceToValidate}" không nằm trong danh sách hỗ trợ giao hàng`);
+      }
     }
 
     // Kiểm tra sản phẩm và tính tổng tiền
@@ -110,7 +122,7 @@ export class ShopOrdersService {
    */
   async getCustomerOrders(userId: number, searchDto: OrderSearchDto) {
     const { status, page = 1, limit = 10 } = searchDto;
-    
+
     const queryBuilder = this.orderRepository
       .createQueryBuilder('order')
       .leftJoinAndSelect('order.orderDetails', 'orderDetails')
@@ -189,7 +201,7 @@ export class ShopOrdersService {
     // Cập nhật trạng thái thành -1 (đã hủy)
     await this.orderRepository.update({ orderId }, { status: -1 });
 
-    return { message: SUCCESS_MESSAGES.CREATE_SUCCESS };
+    return { message: SUCCESS_MESSAGES.CANCEL_SUCCESS };
   }
 
   /**

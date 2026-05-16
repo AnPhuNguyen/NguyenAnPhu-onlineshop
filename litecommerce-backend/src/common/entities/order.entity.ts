@@ -1,55 +1,56 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Customer } from './customer.entity';
 import { Employee } from './employee.entity';
 import { Shipper } from './shipper.entity';
+import { OrderDetail } from './order-detail.entity';
 
 /**
  * Entity đơn hàng
- * Lưu thông tin đơn hàng của khách hàng
+ * Lưu trữ thông tin đơn hàng của khách hàng
  */
 @Entity('Orders')
 export class Order {
   /**
    * ID đơn hàng (Primary Key, Auto Increment)
    */
-  @PrimaryGeneratedColumn({ type: 'int' })
+  @PrimaryGeneratedColumn({ name: 'OrderID', type: 'int' })
   orderId: number;
 
   /**
    * ID khách hàng đặt hàng
    */
-  @Column({ type: 'int', nullable: true })
+  @Column({ name: 'CustomerID', type: 'int', nullable: true })
   customerId: number;
 
   /**
    * Khách hàng liên quan đến đơn hàng
    */
   @ManyToOne(() => Customer)
-  @JoinColumn({ name: 'CustomerId' })
+  @JoinColumn({ name: 'CustomerID' })
   customer: Customer;
 
   /**
    * Thời gian tạo đơn hàng
    */
-  @Column({ type: 'datetime' })
+  @Column({ name: 'OrderTime', type: 'datetime' })
   orderTime: Date;
 
   /**
    * Tỉnh/Thành phố giao hàng
    */
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ name: 'DeliveryProvince', type: 'varchar', length: 255, nullable: true })
   deliveryProvince: string;
 
   /**
    * Địa chỉ giao hàng
    */
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ name: 'DeliveryAddress', type: 'varchar', length: 255, nullable: true })
   deliveryAddress: string;
 
   /**
    * ID nhân viên xử lý đơn hàng
    */
-  @Column({ type: 'int', nullable: true })
+  @Column({ name: 'EmployeeID', type: 'int', nullable: true })
   employeeId: number;
 
   /**
@@ -62,13 +63,13 @@ export class Order {
   /**
    * Thời gian chấp nhận đơn hàng
    */
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ name: 'AcceptTime', type: 'datetime', nullable: true })
   acceptTime: Date;
 
   /**
    * ID người giao hàng
    */
-  @Column({ type: 'int', nullable: true })
+  @Column({ name: 'ShipperID', type: 'int', nullable: true })
   shipperId: number;
 
   /**
@@ -81,24 +82,24 @@ export class Order {
   /**
    * Thời gian bắt đầu giao hàng
    */
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ name: 'ShippedTime', type: 'datetime', nullable: true })
   shippedTime: Date;
 
   /**
    * Thời gian hoàn thành đơn hàng
    */
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ name: 'FinishedTime', type: 'datetime', nullable: true })
   finishedTime: Date;
 
   /**
    * Trạng thái đơn hàng
-   * -2: Đơn hàng bị từ chối
-   * -1: Đơn hàng đã bị hủy
-   * 1: Đơn hàng vừa gửi/khởi tạo
-   * 2: Đơn hàng đã chấp nhận
-   * 3: Đơn hàng đang được vận chuyển
-   * 4: Đơn hàng đã hoàn tất
    */
-  @Column({ type: 'int' })
+  @Column({ name: 'Status', type: 'int' })
   status: number;
+
+  /**
+   * Chi tiết đơn hàng
+   */
+  @OneToMany(() => OrderDetail, (detail) => detail.order)
+  orderDetails: OrderDetail[];
 }

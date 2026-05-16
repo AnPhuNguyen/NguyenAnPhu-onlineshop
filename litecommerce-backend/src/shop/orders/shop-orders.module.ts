@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Order } from '../entities/order.entity';
+import { Order } from '../../common/entities/order.entity';
 import { OrderDetail } from '../../common/entities/order-detail.entity';
 import { Product } from '../../common/entities/product.entity';
 import { Customer } from '../../common/entities/customer.entity';
+import { Province } from '../../common/entities/province.entity';
 import { ShopOrdersService } from './shop-orders.service';
 import { ShopOrdersController } from './shop-orders.controller';
 
@@ -13,10 +14,10 @@ import { ShopOrdersController } from './shop-orders.controller';
  */
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Order, OrderDetail, Product, Customer]),
+    TypeOrmModule.forFeature([Order, OrderDetail, Product, Customer, Province]),
   ],
   controllers: [ShopOrdersController],
   providers: [ShopOrdersService],
   exports: [ShopOrdersService],
 })
-export class ShopOrdersModule {}
+export class ShopOrdersModule { }

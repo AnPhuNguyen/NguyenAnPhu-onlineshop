@@ -7,12 +7,13 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
 import { AdminCartService } from '../cart/admin-cart.service';
-import { Order } from '../../shop/entities/order.entity';
+import { Order } from '../../common/entities/order.entity';
 import { OrderDetail } from '../../common/entities/order-detail.entity';
 import { Product } from '../../common/entities/product.entity';
 import { Customer } from '../../common/entities/customer.entity';
 import { Employee } from '../../common/entities/employee.entity';
 import { Shipper } from '../../common/entities/shipper.entity';
+import { Province } from '../../common/entities/province.entity';
 import { AdminCreateOrderDto, AdminOrderSearchDto, AdminUpdateStatusDto, OrderItemAdminDto } from './dto/order-query.dto';
 import { ORDER_MESSAGES, SUCCESS_MESSAGES } from '../../common/constants/messages';
 import { OrderDetailDto } from '../../shop/orders/dto/order.dto';
@@ -39,7 +40,10 @@ export class AdminOrdersService {
 
     @InjectRepository(Shipper)
     private shipperRepository: Repository<Shipper>,
-  ) {}
+
+    @InjectRepository(Province)
+    private provinceRepository: Repository<Province>,
+  ) { }
 
   private getStatusDescription(status: number): string {
     const statusMap: Record<string, string> = {
@@ -68,7 +72,16 @@ export class AdminOrdersService {
       where: { customerId, isLocked: 0 },
     });
     if (!customer) {
-      throw new NotFoundException('Không tìm thấy thông tin khách hàng');
+      throw new NotFoundException('Không tìm thấy thông tin khách hàng hoặc tài khoản bị khóa');
+    }
+
+    // Kiểm tra ràng buộc tỉnh thành
+    if (deliveryProvince) {
+      const provinceExists = await this.provinceRepository.findOne({ where: { provinceName: deliveryProvince } });
+      if (!provinceExists) throw new BadRequestException(`Tỉnh/Thành phố "${deliveryProvince}" không hợp lệ`);
+    } else if (customer.province) {
+      const provinceExists = await this.provinceRepository.findOne({ where: { provinceName: customer.province } });
+      if (!provinceExists) throw new BadRequestException(`Tỉnh/Thành phố "${customer.province}" của khách hàng không có trong danh sách hỗ trợ`);
     }
 
     // Validate products exist + IsSelling=1 and compute salePrice from DB
@@ -81,7 +94,7 @@ export class AdminOrdersService {
       });
 
       if (!product) {
-        throw new NotFoundException('Sản phẩm không có sẵn để bán');
+        throw new NotFoundException(`Sản phẩm (ID: ${item.productId}) không còn bán`);
       }
 
       if (item.quantity <= 0) {
@@ -104,7 +117,6 @@ export class AdminOrdersService {
       deliveryProvince: deliveryProvince ?? customer.province,
       deliveryAddress: deliveryAddress ?? customer.address,
       status: 1,
-      // employeeId, acceptTime, shipperId, shippedTime, finishedTime left null
     });
 
     const savedOrder = await this.orderRepository.save(order);
@@ -163,7 +175,6 @@ export class AdminOrdersService {
   }
 
   async searchOrders(query: AdminOrderSearchDto) {
-    // same as getOrders for now (UI may call /search)
     return this.getOrders(query);
   }
 
@@ -212,9 +223,8 @@ export class AdminOrdersService {
     const order = await this.orderRepository.findOne({ where: { orderId } });
     if (!order) throw new NotFoundException(ORDER_MESSAGES.NOT_FOUND ?? 'Không tìm thấy đơn hàng');
 
-    // Guide: Xóa đơn hàng (trừ khi được chấp nhận hoặc đang vận chuyển)
     if (order.status === 2 || order.status === 3) {
-      throw new ForbiddenException('Không thể xóa đơn hàng ở trạng thái này');
+      throw new ForbiddenException('Không thể xóa đơn hàng ở trạng thái đã chấp nhận hoặc đang vận chuyển');
     }
 
     await this.orderRepository.delete({ orderId });
@@ -222,8 +232,6 @@ export class AdminOrdersService {
   }
 
   private validateTransition(current: number, next: number) {
-    // Main flow: 1 -> 2 -> 3 -> 4
-    // Side flow: (1/2) -> (-2/-1), 3 -> -2, -2 -> -1, -2 -> 3
     const allowed: Record<number, number[]> = {
       1: [2, -2, -1],
       2: [3, -2, -1],
@@ -237,8 +245,11 @@ export class AdminOrdersService {
     return list.includes(next);
   }
 
-  async updateStatus(employeeId: number, orderId: number, dto: AdminUpdateStatusDto) {
+  async updateStatus(user: any, orderId: number, dto: AdminUpdateStatusDto) {
     const { status: nextStatus, shipperId } = dto;
+    const employeeId = user.userId;
+    const roles = user.roles || [];
+    const isAdmin = roles.includes('admin');
 
     const order = await this.orderRepository.findOne({ where: { orderId } });
     if (!order) throw new NotFoundException(ORDER_MESSAGES.NOT_FOUND ?? 'Không tìm thấy đơn hàng');
@@ -249,24 +260,23 @@ export class AdminOrdersService {
       throw new ForbiddenException('Không thể chuyển trạng thái theo luồng yêu cầu');
     }
 
-    // Assign employee when accept (2)
+    // Khi chấp nhận (2), gán nhân viên xử lý
     if (nextStatus === 2) {
       order.employeeId = employeeId;
-      (order as any).acceptTime = new Date();
+      order.acceptTime = new Date();
     }
 
-    // Prevent other employees from intervening when already assigned
-    if (order.employeeId && order.employeeId !== employeeId) {
-      // Only allow if employee is the assignee OR current status is still 1 (not accepted)
+    // Logic can thiệp: Nếu là ADMIN thì được quyền ghi đè
+    if (order.employeeId && order.employeeId !== employeeId && !isAdmin) {
       if (currentStatus !== 1) {
-        throw new ForbiddenException('Nhân viên không có quyền can thiệp đơn hàng này');
+        throw new ForbiddenException('Chỉ nhân viên được gán hoặc ADMIN mới có quyền can thiệp đơn hàng này');
       }
     }
 
-    // Assign shipper when shipping (3)
+    // Sang vận chuyển (3), bắt buộc chọn shipper
     if (nextStatus === 3) {
       if (!shipperId) {
-        throw new BadRequestException('Thiếu shipperId để chuyển sang vận chuyển');
+        throw new BadRequestException('Vui lòng chọn người giao hàng');
       }
 
       const shipper = await this.shipperRepository.findOne({ where: { shipperId } });
@@ -275,20 +285,11 @@ export class AdminOrdersService {
       }
 
       order.shipperId = shipperId;
-      (order as any).shippedTime = new Date();
+      order.shippedTime = new Date();
     }
 
     if (nextStatus === 4) {
-      (order as any).finishedTime = new Date();
-    }
-
-    if (nextStatus === -2) {
-      // refused
-      // keep acceptTime/ shippedTime as-is
-    }
-
-    if (nextStatus === -1) {
-      // canceled
+      order.finishedTime = new Date();
     }
 
     order.status = nextStatus;

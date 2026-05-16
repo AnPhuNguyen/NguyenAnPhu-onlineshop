@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Order } from '../../shop/entities/order.entity';
+import { Order } from './order.entity';
 
 /**
  * Entity khách hàng
@@ -16,49 +16,49 @@ export class Customer {
   /**
    * Tên đầy đủ của khách hàng
    */
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ name: 'CustomerName', type: 'varchar', length: 255 })
   customerName: string;
 
   /**
    * Tên liên hệ (hiện tại bằng customerName)
    */
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ name: 'ContactName', type: 'varchar', length: 255 })
   contactName: string;
 
   /**
    * Tỉnh/Thành phố của khách hàng
    */
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ name: 'Province', type: 'varchar', length: 255, nullable: true })
   province: string;
 
   /**
    * Địa chỉ chi tiết của khách hàng
    */
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ name: 'Address', type: 'varchar', length: 255, nullable: true })
   address: string;
 
   /**
    * Số điện thoại liên hệ
    */
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ name: 'Phone', type: 'varchar', length: 255, nullable: true })
   phone: string;
 
   /**
    * Email đăng nhập (Unique)
    */
-  @Column({ type: 'varchar', length: 50, unique: true })
+  @Column({ name: 'Email', type: 'varchar', length: 50, unique: true })
   email: string;
 
   /**
    * Mật khẩu (đã hash MD5)
    */
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ name: 'Password', type: 'varchar', length: 50 })
   password: string;
 
   /**
    * Trạng thái khóa tài khoản (0: hoạt động, 1: bị khóa)
    */
-  @Column({ type: 'tinyint', nullable: true })
+  @Column({ name: 'IsLocked', type: 'tinyint', nullable: true })
   isLocked: number;
 
   /**

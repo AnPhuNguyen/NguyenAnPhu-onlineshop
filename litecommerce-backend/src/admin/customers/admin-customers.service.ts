@@ -1,31 +1,30 @@
 import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { HashUtil } from '../../common/utils/hash.util';
 import { Customer } from '../../common/entities/customer.entity';
+import { Province } from '../../common/entities/province.entity';
 import { CustomerQueryDto } from './dto/customer-query.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { CreateCustomerDto } from './dto/create-customer.dto';
 import { ResetCustomerPasswordDto } from './dto/reset-customer-password.dto';
+import { SUCCESS_MESSAGES, CUSTOMER_MESSAGES } from '../../common/constants/messages';
 
 @Injectable()
 export class AdminCustomersService {
   constructor(
     @InjectRepository(Customer)
     private readonly customerRepository: Repository<Customer>,
-  ) {}
+    @InjectRepository(Province)
+    private readonly provinceRepository: Repository<Province>,
+  ) { }
 
   async getCustomers(query: CustomerQueryDto) {
     const { keyword, isLocked, province, page = 1, limit = 10 } = query;
 
-    const where: any = {};
-    if (keyword) {
-      where.customerName = { ...(where.customerName ?? {}), /* placeholder */ };
-    }
-
     const findWhere: any = {};
     if (keyword) {
-      // TypeORM ILike không được import ở đây; dùng kiểu biểu diễn object
-      findWhere.customerName = ILike(`%${keyword}%`);
+      findWhere.customerName = Like(`%${keyword}%`);
     }
     if (isLocked !== undefined) {
       findWhere.isLocked = Number(isLocked);
@@ -39,7 +38,7 @@ export class AdminCustomersService {
       skip: (page - 1) * limit,
       take: limit,
       order: { customerId: 'DESC' },
-    } as any);
+    });
 
     return {
       items: items.map((c) => ({
@@ -60,7 +59,7 @@ export class AdminCustomersService {
 
   async getCustomerById(id: number) {
     const customer = await this.customerRepository.findOne({ where: { customerId: id } });
-    if (!customer) throw new NotFoundException('Không tìm thấy khách hàng');
+    if (!customer) throw new NotFoundException(CUSTOMER_MESSAGES.NOT_FOUND);
 
     return {
       id: customer.customerId,
@@ -74,35 +73,63 @@ export class AdminCustomersService {
     };
   }
 
+  async createCustomer(dto: CreateCustomerDto) {
+    const exists = await this.customerRepository.findOne({ where: { email: dto.email } });
+    if (exists) throw new ConflictException('Email đã tồn tại');
+
+    if (dto.province) {
+      const p = await this.provinceRepository.findOne({ where: { provinceName: dto.province } });
+      if (!p) throw new BadRequestException(`Tỉnh/Thành phố "${dto.province}" không hợp lệ`);
+    }
+
+    const customer = new Customer();
+    Object.assign(customer, {
+      ...dto,
+      contactName: dto.contactName || dto.customerName,
+      password: HashUtil.hashPassword(dto.password || '123456'), // mặc định pass nếu thiếu
+      isLocked: 0,
+    });
+
+    await this.customerRepository.save(customer);
+    return { message: SUCCESS_MESSAGES.CREATE_SUCCESS, customerId: customer.customerId };
+  }
+
   async updateCustomer(id: number, dto: UpdateCustomerDto) {
     const customer = await this.customerRepository.findOne({ where: { customerId: id } });
-    if (!customer) throw new NotFoundException('Không tìm thấy khách hàng');
+    if (!customer) throw new NotFoundException(CUSTOMER_MESSAGES.NOT_FOUND);
 
-    // employee/admin được quyền chỉnh sửa (trừ password)
-    customer.customerName = dto.customerName;
-    customer.contactName = dto.contactName;
-    customer.province = dto.province ?? customer.province;
-    customer.address = dto.address ?? customer.address;
-    customer.phone = dto.phone ?? customer.phone;
+    if (dto.province) {
+      const p = await this.provinceRepository.findOne({ where: { provinceName: dto.province } });
+      if (!p) throw new BadRequestException(`Tỉnh/Thành phố "${dto.province}" không hợp lệ`);
+    }
 
     if (dto.email && dto.email !== customer.email) {
-      // tránh đổi email trùng
       const exists = await this.customerRepository.findOne({ where: { email: dto.email } });
       if (exists) throw new ConflictException('Email đã tồn tại');
       customer.email = dto.email;
     }
 
-    if (dto.isLocked !== undefined) {
-      customer.isLocked = dto.isLocked;
-    }
-
+    Object.assign(customer, dto);
     await this.customerRepository.save(customer);
-    return { message: 'Cập nhật khách hàng thành công' };
+    return { message: SUCCESS_MESSAGES.UPDATE_SUCCESS };
+  }
+
+  async deleteCustomer(id: number) {
+    const customer = await this.customerRepository.findOne({ where: { customerId: id } });
+    if (!customer) throw new NotFoundException(CUSTOMER_MESSAGES.NOT_FOUND);
+
+    // Chú ý: Cần kiểm tra xem khách hàng có đơn hàng không trước khi xóa (ràng buộc FK)
+    try {
+      await this.customerRepository.delete(id);
+      return { message: SUCCESS_MESSAGES.DELETE_SUCCESS };
+    } catch (e) {
+      throw new BadRequestException('Không thể xóa khách hàng này vì đã có dữ liệu đơn hàng liên quan');
+    }
   }
 
   async resetPassword(id: number, dto: ResetCustomerPasswordDto) {
     const customer = await this.customerRepository.findOne({ where: { customerId: id } });
-    if (!customer) throw new NotFoundException('Không tìm thấy khách hàng');
+    if (!customer) throw new NotFoundException(CUSTOMER_MESSAGES.NOT_FOUND);
 
     if (dto.newPassword !== dto.confirmPassword) {
       throw new BadRequestException('Mật khẩu xác nhận không khớp');
@@ -111,22 +138,6 @@ export class AdminCustomersService {
     customer.password = HashUtil.hashPassword(dto.newPassword);
     await this.customerRepository.save(customer);
 
-    return { message: 'Đổi mật khẩu khách hàng thành công' };
+    return { message: SUCCESS_MESSAGES.UPDATE_SUCCESS };
   }
-
-  async lockCustomer(id: number, isLocked: number) {
-    if (isLocked !== 0 && isLocked !== 1) {
-      throw new ForbiddenException('isLocked phải là 0 hoặc 1');
-    }
-    const customer = await this.customerRepository.findOne({ where: { customerId: id } });
-    if (!customer) throw new NotFoundException('Không tìm thấy khách hàng');
-    customer.isLocked = isLocked;
-    await this.customerRepository.save(customer);
-    return { message: 'Cập nhật trạng thái khóa khách hàng thành công' };
-  }
-}
-
-// helper for ILike for case-insensitive search
-function ILike(pattern: string) {
-  return { $ilike: pattern } as any;
 }

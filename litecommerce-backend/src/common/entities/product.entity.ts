@@ -14,64 +14,64 @@ export class Product {
   /**
    * ID sản phẩm (Primary Key, Auto Increment)
    */
-  @PrimaryGeneratedColumn({ type: 'int' })
+  @PrimaryGeneratedColumn({ name: 'ProductID', type: 'int' })
   productId: number;
 
   /**
    * Tên sản phẩm
    */
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ name: 'ProductName', type: 'varchar', length: 255 })
   productName: string;
 
   /**
    * Mô tả chi tiết sản phẩm
    */
-  @Column({ type: 'varchar', length: 2000, nullable: true })
+  @Column({ name: 'ProductDescription', type: 'varchar', length: 2000, nullable: true })
   productDescription: string;
 
   /**
    * ID nhà cung cấp (Foreign Key)
    */
-  @Column({ type: 'int', nullable: true })
+  @Column({ name: 'SupplierID', type: 'int', nullable: true })
   supplierId: number;
 
   /**
    * ID danh mục (Foreign Key)
    */
-  @Column({ type: 'int', nullable: true })
+  @Column({ name: 'CategoryID', type: 'int', nullable: true })
   categoryId: number;
 
   /**
    * Đơn vị tính (VD: cái, hộp, chiếc)
    */
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ name: 'Unit', type: 'varchar', length: 255 })
   unit: string;
 
   /**
    * Giá bán
    */
-  @Column({ type: 'decimal', precision: 19, scale: 4 })
+  @Column({ name: 'Price', type: 'decimal', precision: 19, scale: 4 })
   price: number;
 
   /**
    * Link ảnh đại diện
    */
-  @Column({ type: 'varchar', length: 255, nullable: true })
+  @Column({ name: 'Photo', type: 'varchar', length: 255, nullable: true })
   photo: string;
 
   /**
    * Trạng thái bán (0: ngừng, 1: đang bán)
    */
-  @Column({ type: 'tinyint' })
+  @Column({ name: 'IsSelling', type: 'tinyint' })
   isSelling: number;
 
   // Quan hệ
   @ManyToOne(() => Category)
-  @JoinColumn({ name: 'categoryId' })
+  @JoinColumn({ name: 'CategoryID' })
   category: Category;
 
   @ManyToOne(() => Supplier)
-  @JoinColumn({ name: 'supplierId' })
+  @JoinColumn({ name: 'SupplierID' })
   supplier: Supplier;
 
   @OneToMany(() => ProductAttribute, attr => attr.product)

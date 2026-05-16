@@ -6,19 +6,24 @@ import {
   Param,
   ParseIntPipe,
   Query,
+  Post,
+  Put,
+  Delete,
+  Body,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { ADMIN_PRODUCTS_RESPONSES } from '../../common/constants/api-response';
 import { AdminProductsService } from './admin-products.service';
 import { AdminProductQueryDto } from './dto/product-query.dto';
+import { CreateProductDto, UpdateProductDto } from './dto/create-product.dto';
 
 @ApiTags('admin-products')
 @ApiBearerAuth('JWT-auth')
 @Controller('admin/products')
 @Roles('employee', 'admin')
 export class AdminProductsController {
-  constructor(private readonly adminProductsService: AdminProductsService) {}
+  constructor(private readonly adminProductsService: AdminProductsService) { }
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -43,6 +48,30 @@ export class AdminProductsController {
   @ApiParam({ name: 'id', description: 'ID sản phẩm' })
   async detail(@Param('id', ParseIntPipe) id: number) {
     return this.adminProductsService.getProductDetail(id);
+  }
+
+  @Post()
+  @Roles('admin')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Tạo sản phẩm mới' })
+  async create(@Body() dto: CreateProductDto) {
+    return this.adminProductsService.createProduct(dto);
+  }
+
+  @Put(':id')
+  @Roles('admin')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Cập nhật thông tin sản phẩm' })
+  async update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateProductDto) {
+    return this.adminProductsService.updateProduct(id, dto);
+  }
+
+  @Delete(':id')
+  @Roles('admin')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Xóa sản phẩm' })
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    return this.adminProductsService.deleteProduct(id);
   }
 
   @Get(':id/attributes')

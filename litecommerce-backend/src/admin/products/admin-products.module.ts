@@ -5,6 +5,7 @@ import { Category } from '../../common/entities/category.entity';
 import { Supplier } from '../../common/entities/supplier.entity';
 import { ProductAttribute } from '../../common/entities/product-attribute.entity';
 import { ProductPhoto } from '../../common/entities/product-photo.entity';
+import { OrderDetail } from '../../common/entities/order-detail.entity';
 import { AdminProductsController } from './admin-products.controller';
 import { AdminProductsService } from './admin-products.service';
 
@@ -16,9 +17,10 @@ import { AdminProductsService } from './admin-products.service';
       Supplier,
       ProductAttribute,
       ProductPhoto,
+      OrderDetail,
     ]),
   ],
   controllers: [AdminProductsController],
   providers: [AdminProductsService],
 })
-export class AdminProductsModule {}
+export class AdminProductsModule { }
