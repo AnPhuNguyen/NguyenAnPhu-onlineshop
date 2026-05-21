@@ -12,6 +12,9 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import databaseConfig from './config/database.config';
 import { ShopModule } from './shop/shop.module';
 import { AdminModule } from './admin/admin.module';
+import { CartCoreModule } from './common/modules/cart-core/cart-core.module';
+import { CredentialSecurityModule } from './common/modules/credential-security/credential-security.module';
+import { OrderCoreModule } from './common/modules/order-core/order-core.module';
 
 /**
  * Module chính của ứng dụng
@@ -57,6 +60,9 @@ import { AdminModule } from './admin/admin.module';
     // Feature modules
     ShopModule,
     AdminModule,
+    CartCoreModule,
+    CredentialSecurityModule,
+    OrderCoreModule,
   ],
   providers: [
     // Global guards

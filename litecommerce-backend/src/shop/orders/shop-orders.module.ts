@@ -7,6 +7,7 @@ import { Customer } from '../../common/entities/customer.entity';
 import { Province } from '../../common/entities/province.entity';
 import { ShopOrdersService } from './shop-orders.service';
 import { ShopOrdersController } from './shop-orders.controller';
+import { ShopCartModule } from '../cart/shop-cart.module';
 
 /**
  * Module đơn hàng cho khách hàng
@@ -14,6 +15,7 @@ import { ShopOrdersController } from './shop-orders.controller';
  */
 @Module({
   imports: [
+    ShopCartModule,
     TypeOrmModule.forFeature([Order, OrderDetail, Product, Customer, Province]),
   ],
   controllers: [ShopOrdersController],

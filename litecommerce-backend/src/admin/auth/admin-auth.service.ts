@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Employee } from '../../common/entities/employee.entity';
-import { HashUtil } from '../../common/utils/hash.util';
+import { CredentialSecurityService } from '../../common/modules/credential-security/credential-security.service';
 import { AUTH_MESSAGES } from '../../common/constants/messages';
 import { AdminLoginDto } from './dto/login.dto';
 
@@ -13,7 +13,8 @@ export class AdminAuthService {
     @InjectRepository(Employee)
     private employeeRepository: Repository<Employee>,
     private jwtService: JwtService,
-  ) {}
+    private securityService: CredentialSecurityService,
+  ) { }
 
   private parseRoles(roleNames: string | null | undefined): string[] {
     if (!roleNames) return [];
@@ -26,15 +27,19 @@ export class AdminAuthService {
   async login(loginDto: AdminLoginDto) {
     try {
       const { email, password } = loginDto;
-      const hashedPassword = HashUtil.hashPassword(password);
 
-      // Kiểm tra email + password hash MD5
+      // Tìm nhân viên theo email
       const employee = await this.employeeRepository.findOne({
-        where: { email, password: hashedPassword },
+        where: { email },
       });
 
-      const isWorking = Number(employee?.isWorking);
-      if (!employee || isWorking !== 1) {
+      if (!employee || Number(employee.isWorking) !== 1) {
+        throw new UnauthorizedException(AUTH_MESSAGES.EMAIL_OR_PASSWORD_INVALID);
+      }
+
+      // Kiểm tra mật khẩu (Băm mật khẩu và so sánh - hỗ trợ legacy MD5 và định dạng mới)
+      const isPasswordValid = await this.securityService.verifyPassword(password, employee.password || '');
+      if (!isPasswordValid) {
         throw new UnauthorizedException(AUTH_MESSAGES.EMAIL_OR_PASSWORD_INVALID);
       }
 

@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import { Customer } from '../../common/entities/customer.entity';
-import { HashUtil } from '../../common/utils/hash.util';
+import { CredentialSecurityService } from '../../common/modules/credential-security/credential-security.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
@@ -18,7 +18,8 @@ export class ShopAuthService {
     @InjectRepository(Customer)
     private customerRepository: Repository<Customer>,
     private jwtService: JwtService,
-  ) {}
+    private securityService: CredentialSecurityService,
+  ) { }
 
   /**
    * Đăng nhập khách hàng
@@ -27,13 +28,17 @@ export class ShopAuthService {
    */
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
-    const hashedPassword = HashUtil.hashPassword(password);
 
     const customer = await this.customerRepository.findOne({
-      where: { email, password: hashedPassword, isLocked: 0 },
+      where: { email, isLocked: 0 },
     });
 
     if (!customer) {
+      throw new UnauthorizedException(AUTH_MESSAGES.EMAIL_OR_PASSWORD_INVALID);
+    }
+
+    const isPasswordValid = await this.securityService.verifyPassword(password, customer.password || '');
+    if (!isPasswordValid) {
       throw new UnauthorizedException(AUTH_MESSAGES.EMAIL_OR_PASSWORD_INVALID);
     }
 
@@ -76,7 +81,7 @@ export class ShopAuthService {
       throw new ConflictException(AUTH_MESSAGES.EMAIL_ALREADY_EXISTS);
     }
 
-    const hashedPassword = HashUtil.hashPassword(password);
+    const hashedPassword = this.securityService.hashPassword(password);
 
     const customer = this.customerRepository.create({
       customerName,
