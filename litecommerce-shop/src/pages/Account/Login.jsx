@@ -1,4 +1,5 @@
-// src/pages/Login.jsx
+// src/pages/Account/Login.jsx
+// Trang đăng nhập – kết nối backend API
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
@@ -16,8 +17,7 @@ export default function Login() {
         e.preventDefault();
         setError('');
         setLoading(true);
-        await new Promise((r) => setTimeout(r, 500)); // simulate network
-        const result = login(form.email, form.password);
+        const result = await login(form.email, form.password);
         setLoading(false);
         if (result.success) {
             navigate(from, { replace: true });
@@ -46,8 +46,8 @@ export default function Login() {
 
                     {error && (
                         <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-[#ba1a1a] text-sm flex items-center gap-2">
-                            <span className="material-symbols-outlined text-base">error</span>
-                            <p>{error}</p>
+                            <span className="material-symbols-outlined text-base font-bold">error</span>
+                            <p className="font-medium">{error}</p>
                         </div>
                     )}
 
@@ -57,14 +57,14 @@ export default function Login() {
                                 Email
                             </label>
                             <div className="flex items-center border border-[#c3c6d7] rounded-lg bg-[#f2f4f6] focus-within:border-[#004ac6] focus-within:ring-2 focus-within:ring-[#004ac6]/20 transition-all">
-                                <span className="material-symbols-outlined text-[#737686] ml-3">mail</span>
+                                <span className="material-symbols-outlined text-[#737686] ml-3 text-lg">mail</span>
                                 <input
                                     type="email"
                                     required
                                     placeholder="email@example.com"
                                     value={form.email}
                                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                                    className="flex-1 bg-transparent border-none outline-none focus:ring-0 px-3 py-3 text-sm placeholder:text-[#737686]"
+                                    className="flex-1 bg-transparent border-none outline-none focus:ring-0 px-3 py-3 text-sm font-medium placeholder:text-[#737686]"
                                 />
                             </div>
                         </div>
@@ -74,14 +74,14 @@ export default function Login() {
                                 Mật khẩu
                             </label>
                             <div className="flex items-center border border-[#c3c6d7] rounded-lg bg-[#f2f4f6] focus-within:border-[#004ac6] focus-within:ring-2 focus-within:ring-[#004ac6]/20 transition-all">
-                                <span className="material-symbols-outlined text-[#737686] ml-3">lock</span>
+                                <span className="material-symbols-outlined text-[#737686] ml-3 text-lg">lock</span>
                                 <input
                                     type="password"
                                     required
                                     placeholder="••••••••"
                                     value={form.password}
                                     onChange={(e) => setForm({ ...form, password: e.target.value })}
-                                    className="flex-1 bg-transparent border-none outline-none focus:ring-0 px-3 py-3 text-sm placeholder:text-[#737686]"
+                                    className="flex-1 bg-transparent border-none outline-none focus:ring-0 px-3 py-3 text-sm font-medium placeholder:text-[#737686]"
                                 />
                             </div>
                         </div>
@@ -96,8 +96,8 @@ export default function Login() {
                     </form>
 
                     <div className="mt-6 flex flex-col items-center gap-3">
-                        <Link to="/change-password" className="text-xs text-[#004ac6] font-medium hover:underline">
-                            Quên mật khẩu? Đổi mật khẩu
+                        <Link to="/change-password" title="Chưa hỗ trợ" className="text-xs text-[#004ac6] font-medium hover:underline opacity-50 cursor-not-allowed">
+                            Quên mật khẩu?
                         </Link>
                         <p className="text-center text-sm text-[#434655]">
                             Chưa có tài khoản?{' '}

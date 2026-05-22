@@ -1,4 +1,5 @@
 // src/components/common/ProductCard.jsx
+// Thẻ sản phẩm hiển thị trong lưới – dùng trường từ backend API
 import { Link } from 'react-router-dom';
 import { useCartStore } from '../../store/cartStore';
 import { useAuthStore } from '../../store/authStore';
@@ -6,38 +7,48 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function formatPrice(price) {
-    return price.toLocaleString('vi-VN') + '₫';
+    return Number(price).toLocaleString('vi-VN') + '₫';
 }
 
 export default function ProductCard({ product }) {
     const [added, setAdded] = useState(false);
+    const [loading, setLoading] = useState(false);
     const addItem = useCartStore((s) => s.addItem);
     const { isAuthenticated } = useAuthStore();
     const navigate = useNavigate();
 
-    const handleAddToCart = (e) => {
+    // Hỗ trợ cả field name từ mockdata cũ (id/name) và backend (productId/productName)
+    const id = product.productId ?? product.id;
+    const name = product.productName ?? product.name;
+    const photo = product.photo;
+    const price = Number(product.price);
+    const isSelling = product.isSelling;
+
+    const handleAddToCart = async (e) => {
         e.preventDefault();
         if (!isAuthenticated) {
             navigate('/login');
             return;
         }
-        if (!product.isSelling) return;
-        addItem(product, 1);
+        if (!isSelling) return;
+        setLoading(true);
+        await addItem(id, 1);
+        setLoading(false);
         setAdded(true);
         setTimeout(() => setAdded(false), 2000);
     };
 
     return (
         <Link
-            to={`/products/detail/${product.id}`}
+            to={`/products/detail/${id}`}
             className="block bg-white rounded-xl p-4 ambient-shadow group hover:bg-[#f2f4f6] transition-all duration-300 h-full flex flex-col"
         >
-            {/* Product image */}
+            {/* Ảnh sản phẩm */}
             <div className="aspect-square bg-[#eceef0] rounded-lg mb-4 overflow-hidden relative flex items-center justify-center flex-shrink-0">
-                {product.photo ? (
+                {photo ? (
                     <img
-                        src={product.photo}
-                        alt={product.name}
+                        src={photo}
+                        alt={name}
                         className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
                         onError={(e) => {
                             e.target.style.display = 'none';
@@ -47,11 +58,11 @@ export default function ProductCard({ product }) {
                 ) : null}
                 <span
                     className="material-symbols-outlined text-5xl text-[#737686]"
-                    style={{ display: product.photo ? 'none' : 'flex' }}
+                    style={{ display: photo ? 'none' : 'flex' }}
                 >
                     inventory_2
                 </span>
-                {!product.isSelling && (
+                {!isSelling && (
                     <div className="absolute inset-0 bg-black/40 flex items-center justify-center rounded-lg">
                         <span className="bg-white text-[#ba1a1a] text-xs font-black px-3 py-1 rounded-full">
                             Ngừng bán
@@ -60,25 +71,26 @@ export default function ProductCard({ product }) {
                 )}
             </div>
 
-            {/* Product name */}
+            {/* Tên sản phẩm */}
             <h3 className="font-bold text-[#191c1e] mb-1 line-clamp-2 min-h-[2.5rem] text-sm leading-tight">
-                {product.name}
+                {name}
             </h3>
 
-            {/* Price + Add button */}
+            {/* Giá + nút thêm giỏ */}
             <div className="flex items-center justify-between mt-auto pt-2">
-                <span className="text-base font-black text-[#004ac6]">{formatPrice(product.price)}</span>
-                {product.isSelling && (
+                <span className="text-base font-black text-[#004ac6]">{formatPrice(price)}</span>
+                {isSelling && (
                     <button
                         onClick={handleAddToCart}
-                        className={`p-2 rounded-full transition-all active:scale-90 ${added
-                            ? 'bg-green-500 text-white'
-                            : 'bg-[#b4c5ff] text-[#004ac6] hover:bg-[#004ac6] hover:text-white'
+                        disabled={loading}
+                        className={`p-2 rounded-full transition-all active:scale-90 disabled:opacity-60 ${added
+                                ? 'bg-green-500 text-white'
+                                : 'bg-[#b4c5ff] text-[#004ac6] hover:bg-[#004ac6] hover:text-white'
                             }`}
                         title="Thêm vào giỏ"
                     >
                         <span className="material-symbols-outlined text-sm">
-                            {added ? 'check' : 'add_shopping_cart'}
+                            {added ? 'check' : loading ? 'progress_activity' : 'add_shopping_cart'}
                         </span>
                     </button>
                 )}

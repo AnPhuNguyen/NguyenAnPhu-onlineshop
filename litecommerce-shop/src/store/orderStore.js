@@ -1,55 +1,46 @@
 // src/store/orderStore.js
+// Quản lý trạng thái đơn hàng của khách hàng – đồng bộ với backend.
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { MOCK_ORDERS } from '../data/mockData';
+import { createOrderApi, cancelOrderApi } from '../lib/orderApi';
 
-export const useOrderStore = create(
-    persist(
-        (set, get) => ({
-            orders: MOCK_ORDERS,
+/**
+ * Store đơn hàng – chủ yếu xử lý các hành động (actions) như tạo và hủy đơn.
+ * Danh sách đơn hàng nên được tải qua React Query trong component để có cache tốt hơn,
+ * nhưng ta giữ lại các phương thức này để đồng bộ với UI hiện tại.
+ */
+export const useOrderStore = create((set) => ({
+    loading: false,
+    error: null,
 
-            createOrder: ({ customerId, items, deliveryProvince, deliveryAddress }) => {
-                const newOrder = {
-                    id: Date.now(),
-                    status: 1,
-                    orderTime: new Date().toISOString(),
-                    acceptTime: null,
-                    shippedTime: null,
-                    finishedTime: null,
-                    deliveryProvince,
-                    deliveryAddress,
-                    details: items.map((item) => ({
-                        productId: item.productId,
-                        productName: item.productName,
-                        quantity: item.quantity,
-                        salePrice: item.price,
-                        photo: item.photo,
-                    })),
-                };
-                set((state) => ({ orders: [newOrder, ...state.orders] }));
-                return newOrder;
-            },
-
-            cancelOrder: (orderId) => {
-                set((state) => ({
-                    orders: state.orders.map((o) =>
-                        o.id === orderId && (o.status === 1 || o.status === 2)
-                            ? { ...o, status: -1 }
-                            : o
-                    ),
-                }));
-            },
-
-            getOrderById: (id) => {
-                return get().orders.find((o) => o.id === Number(id));
-            },
-
-            getOrdersByCustomer: () => {
-                return get().orders;
-            },
-        }),
-        {
-            name: 'litecommerce-orders',
+    /**
+     * Tạo đơn hàng mới từ giỏ hàng hiện tại trên server
+     * @param {{ deliveryProvince: string, deliveryAddress: string }} data
+     */
+    createOrder: async (data) => {
+        set({ loading: true, error: null });
+        try {
+            const response = await createOrderApi(data);
+            return { success: true, orderId: response.orderId };
+        } catch (err) {
+            const message = err.response?.data?.message || 'Không thể đặt hàng';
+            set({ error: message });
+            return { success: false, message };
+        } finally {
+            set({ loading: false });
         }
-    )
-);
+    },
+
+    /**
+     * Hủy đơn hàng thông qua API
+     * @param {number} orderId
+     */
+    cancelOrder: async (orderId) => {
+        try {
+            await cancelOrderApi(orderId);
+            return { success: true };
+        } catch (err) {
+            const message = err.response?.data?.message || 'Không thể hủy đơn hàng';
+            return { success: false, message };
+        }
+    },
+}));
