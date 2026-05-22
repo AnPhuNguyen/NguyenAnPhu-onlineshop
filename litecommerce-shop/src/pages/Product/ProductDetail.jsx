@@ -48,7 +48,7 @@ export default function ProductDetail() {
     // ─── Loading / Not Found ─────────────────────────────────────────────────
     if (isLoading) {
         return (
-            <div className="max-w-7xl mx-auto px-6 py-20 flex flex-col items-center gap-4 text-[#737686]">
+            <div className="max-w-7xl mx-auto px-6 py-20 flex flex-col items-center gap-4 text-outline">
                 <span className="material-symbols-outlined text-6xl animate-spin">progress_activity</span>
                 <p className="font-medium">Đang tải sản phẩm...</p>
             </div>
@@ -58,8 +58,8 @@ export default function ProductDetail() {
     if (isError || !product) {
         return (
             <div className="max-w-2xl mx-auto px-6 py-20 text-center">
-                <p className="text-[#737686] text-lg">Không tìm thấy sản phẩm.</p>
-                <Link to="/products" className="text-[#004ac6] font-bold hover:underline mt-4 inline-block">
+                <p className="text-outline text-lg">Không tìm thấy sản phẩm.</p>
+                <Link to="/products" className="text-primary font-bold hover:underline mt-4 inline-block">
                     Quay lại danh sách
                 </Link>
             </div>
@@ -79,8 +79,8 @@ export default function ProductDetail() {
     return (
         <div className="max-w-7xl mx-auto px-6 py-12">
             {/* Breadcrumb */}
-            <nav className="text-sm text-[#737686] mb-8 flex gap-2 items-center">
-                <Link to="/products" className="hover:text-[#004ac6] transition-colors">Sản phẩm</Link>
+            <nav className="text-sm text-outline mb-8 flex gap-2 items-center">
+                <Link to="/products" className="hover:text-primary transition-colors">Sản phẩm</Link>
                 <span className="material-symbols-outlined text-sm">chevron_right</span>
                 <span className="text-[#191c1e] font-medium truncate max-w-xs">{product.productName}</span>
             </nav>
@@ -88,7 +88,7 @@ export default function ProductDetail() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-16 mb-16">
                 {/* Gallery ảnh */}
                 <div className="space-y-4">
-                    <div className="bg-[#eceef0] rounded-2xl overflow-hidden aspect-square flex items-center justify-center">
+                    <div className="bg-surface-container rounded-2xl overflow-hidden aspect-square flex items-center justify-center">
                         {mainPhoto ? (
                             <img
                                 src={mainPhoto}
@@ -96,7 +96,7 @@ export default function ProductDetail() {
                                 className="object-contain w-full h-full p-8"
                             />
                         ) : (
-                            <span className="material-symbols-outlined text-8xl text-[#737686]">inventory_2</span>
+                            <span className="material-symbols-outlined text-8xl text-outline">inventory_2</span>
                         )}
                     </div>
                     {visiblePhotos.length > 1 && (
@@ -105,7 +105,7 @@ export default function ProductDetail() {
                                 <button
                                     key={photo.photoId ?? idx}
                                     onClick={() => setActivePhoto(idx)}
-                                    className={`w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-[#eceef0] border-2 transition-all ${idx === activePhoto ? 'border-[#004ac6]' : 'border-[#c3c6d7] hover:border-[#004ac6]'
+                                    className={`w-20 h-20 shrink-0 rounded-lg overflow-hidden bg-surface-container border-2 transition-all ${idx === activePhoto ? 'border-primary' : 'border-outline-variant hover:border-primary'
                                         }`}
                                 >
                                     <img src={photo.photo} alt={photo.description} className="w-full h-full object-cover" />
@@ -121,23 +121,23 @@ export default function ProductDetail() {
                         <h1 className="text-3xl font-extrabold text-[#191c1e] mb-2" style={{ fontFamily: "'Manrope', sans-serif" }}>
                             {product.productName}
                         </h1>
-                        <p className="text-sm text-[#737686]">
+                        <p className="text-sm text-outline">
                             Đơn vị tính: <strong className="text-[#191c1e]">{product.unit}</strong>
                         </p>
                         {product.category && (
-                            <p className="text-sm text-[#737686] mt-1">
+                            <p className="text-sm text-outline mt-1">
                                 Danh mục: <strong className="text-[#191c1e]">{product.category.categoryName}</strong>
                             </p>
                         )}
                     </div>
 
-                    <div className="text-4xl font-black text-[#004ac6]">{formatPrice(product.price)}</div>
+                    <div className="text-4xl font-black text-primary">{formatPrice(product.price)}</div>
 
                     {/* Nút thêm vào giỏ */}
                     {product.isSelling ? (
                         <div className="flex gap-4 items-center">
-                            <div className="flex items-center border border-[#c3c6d7] rounded-xl overflow-hidden">
-                                <button onClick={() => changeQty(-1)} className="px-4 py-3 text-[#191c1e] hover:bg-[#f2f4f6] transition-colors font-bold">−</button>
+                            <div className="flex items-center border border-outline-variant rounded-xl overflow-hidden">
+                                <button onClick={() => changeQty(-1)} className="px-4 py-3 text-[#191c1e] hover:bg-surface-container-low transition-colors font-bold">−</button>
                                 <input
                                     type="number"
                                     value={qty}
@@ -145,12 +145,12 @@ export default function ProductDetail() {
                                     onChange={(e) => setQty(Math.max(1, Number(e.target.value)))}
                                     className="w-16 text-center border-none bg-transparent font-bold text-[#191c1e] focus:ring-0 outline-none"
                                 />
-                                <button onClick={() => changeQty(1)} className="px-4 py-3 text-[#191c1e] hover:bg-[#f2f4f6] transition-colors font-bold">+</button>
+                                <button onClick={() => changeQty(1)} className="px-4 py-3 text-[#191c1e] hover:bg-surface-container-low transition-colors font-bold">+</button>
                             </div>
                             <button
                                 onClick={handleAddToCart}
                                 disabled={addState === 'loading'}
-                                className={`flex-grow py-4 rounded-xl font-bold text-lg ambient-shadow hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-60 ${addState === 'success' ? 'bg-green-500 text-white' :
+                                className={`grow py-4 rounded-xl font-bold text-lg ambient-shadow hover:opacity-90 transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-60 ${addState === 'success' ? 'bg-green-500 text-white' :
                                         addState === 'error' ? 'bg-red-500 text-white' :
                                             'primary-gradient text-white'
                                     }`}
@@ -178,7 +178,7 @@ export default function ProductDetail() {
                     <div>
                         <h2 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Manrope', sans-serif" }}>Mô tả</h2>
                         {product.productDescription ? (
-                            <div className="border-t border-[#c3c6d7] pt-4 text-[#434655] leading-relaxed text-sm">
+                            <div className="border-t border-outline-variant pt-4 text-on-surface-variant leading-relaxed text-sm">
                                 <p>{product.productDescription}</p>
                             </div>
                         ) : (
@@ -193,14 +193,14 @@ export default function ProductDetail() {
             {/* Thuộc tính sản phẩm */}
             <h2 className="text-2xl font-bold mb-6" style={{ fontFamily: "'Manrope', sans-serif" }}>Thuộc tính sản phẩm</h2>
             {product.attributes?.length > 0 ? (
-                <section className="bg-[#f2f4f6] rounded-2xl p-8">
-                    <div className="divide-y divide-[#c3c6d7]">
+                <section className="bg-surface-container-low rounded-2xl p-8">
+                    <div className="divide-y divide-outline-variant">
                         {product.attributes
                             .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0))
                             .map((attr, i) => (
                                 <div key={attr.attributeId ?? i} className="flex items-start gap-6 py-4">
-                                    <span className="text-sm font-bold text-[#737686] w-48 flex-shrink-0">{attr.attributeName}</span>
-                                    <span className="text-sm text-[#191c1e] flex-grow">{attr.attributeValue}</span>
+                                    <span className="text-sm font-bold text-outline w-48 shrink-0">{attr.attributeName}</span>
+                                    <span className="text-sm text-[#191c1e] grow">{attr.attributeValue}</span>
                                 </div>
                             ))}
                     </div>

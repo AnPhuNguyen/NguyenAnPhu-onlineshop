@@ -46,13 +46,13 @@ export default function Navbar() {
                     <div className="relative">
                         <Link
                             to="/cart"
-                            className="p-2 text-[#434655] hover:bg-[#eceef0] rounded-full transition-all active:opacity-80 active:scale-95 flex items-center"
+                            className="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-all active:opacity-80 active:scale-95 flex items-center"
                             title="Giỏ hàng"
                         >
                             <span className="material-symbols-outlined">shopping_cart</span>
                         </Link>
                         {cartCount > 0 && (
-                            <span className="absolute -top-1 -right-1 bg-[#ba1a1a] text-[#ffdad6] text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
+                            <span className="absolute -top-1 -right-1 bg-error text-error-container text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
                                 {cartCount}
                             </span>
                         )}
@@ -62,7 +62,7 @@ export default function Navbar() {
                     {isAuthenticated && (
                         <Link
                             to="/orders"
-                            className="p-2 text-[#434655] hover:bg-[#eceef0] rounded-full transition-all active:opacity-80 active:scale-95 flex items-center"
+                            className="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-all active:opacity-80 active:scale-95 flex items-center"
                             title="Đơn hàng"
                         >
                             <span className="material-symbols-outlined">receipt_long</span>
@@ -74,7 +74,7 @@ export default function Navbar() {
                         <div className="relative ml-1" ref={dropdownRef}>
                             <button
                                 onClick={() => setDropdownOpen((prev) => !prev)}
-                                className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-[#dbe1ff] bg-[#eceef0] flex-shrink-0 focus:outline-none"
+                                className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-[#dbe1ff] bg-surface-container shrink-0 focus:outline-none"
                             >
                                 <div className="w-full h-full bg-blue-100 flex items-center justify-center text-blue-700">
                                     <span className="material-symbols-outlined text-2xl">person</span>
@@ -82,15 +82,15 @@ export default function Navbar() {
                             </button>
 
                             {dropdownOpen && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-[#c3c6d7]/20 py-2 z-50">
+                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-outline-variant/20 py-2 z-50">
                                     <div className="px-4 py-2 border-b border-[#e0e3e5]">
                                         <p className="text-sm font-bold text-[#191c1e] truncate">{user?.customerName}</p>
-                                        <p className="text-xs text-[#737686] truncate">{user?.email}</p>
+                                        <p className="text-xs text-outline truncate">{user?.email}</p>
                                     </div>
                                     <Link
                                         to="/profile"
                                         onClick={() => setDropdownOpen(false)}
-                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#191c1e] hover:bg-[#f2f4f6] transition-colors"
+                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#191c1e] hover:bg-surface-container-low transition-colors"
                                     >
                                         <span className="material-symbols-outlined text-base">person</span>
                                         Hồ sơ cá nhân
@@ -98,7 +98,7 @@ export default function Navbar() {
                                     <Link
                                         to="/orders"
                                         onClick={() => setDropdownOpen(false)}
-                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#191c1e] hover:bg-[#f2f4f6] transition-colors"
+                                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#191c1e] hover:bg-surface-container-low transition-colors"
                                     >
                                         <span className="material-symbols-outlined text-base">receipt_long</span>
                                         Đơn hàng của tôi
@@ -106,7 +106,7 @@ export default function Navbar() {
                                     <div className="border-t border-[#e0e3e5] mt-1 pt-1">
                                         <button
                                             onClick={handleLogout}
-                                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors"
+                                            className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-error hover:bg-error-container transition-colors"
                                         >
                                             <span className="material-symbols-outlined text-base">logout</span>
                                             Đăng xuất

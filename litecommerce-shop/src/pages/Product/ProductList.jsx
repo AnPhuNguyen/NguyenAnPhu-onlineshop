@@ -103,14 +103,14 @@ export default function ProductList() {
                 {/* Thanh tìm kiếm */}
                 <form
                     onSubmit={handleSearch}
-                    className="w-full max-w-2xl bg-white rounded-xl p-2 flex items-center ambient-shadow ghost-border focus-within:border-[#004ac6] transition-all duration-300"
+                    className="w-full max-w-2xl bg-white rounded-xl p-2 flex items-center ambient-shadow ghost-border focus-within:border-primary transition-all duration-300"
                 >
-                    <span className="material-symbols-outlined ml-4 text-[#737686]">search</span>
+                    <span className="material-symbols-outlined ml-4 text-outline">search</span>
                     <input
                         name="query"
                         value={inputQuery}
                         onChange={(e) => setInputQuery(e.target.value)}
-                        className="w-full bg-transparent border-none outline-none focus:ring-0 px-4 py-3 text-sm font-medium text-[#191c1e] placeholder:text-[#737686]"
+                        className="w-full bg-transparent border-none outline-none focus:ring-0 px-4 py-3 text-sm font-medium text-[#191c1e] placeholder:text-outline"
                         placeholder="Tìm kiếm sản phẩm..."
                         type="text"
                     />
@@ -122,16 +122,16 @@ export default function ProductList() {
 
             <div className="flex flex-col md:flex-row gap-12 items-start">
                 {/* Sidebar bộ lọc */}
-                <aside className="w-full md:w-72 flex-shrink-0">
-                    <div className="bg-[#f2f4f6] rounded-xl p-8 sticky top-28">
+                <aside className="w-full md:w-72 shrink-0">
+                    <div className="bg-surface-container-low rounded-xl p-8 sticky top-28">
                         <div className="flex items-center gap-2 mb-8">
-                            <span className="material-symbols-outlined text-[#004ac6]">filter_list</span>
+                            <span className="material-symbols-outlined text-primary">filter_list</span>
                             <h2 className="text-xl font-bold" style={{ fontFamily: "'Manrope', sans-serif" }}>Bộ lọc</h2>
                         </div>
 
                         {/* Danh mục */}
                         <div className="mb-10">
-                            <h3 className="text-sm font-bold uppercase tracking-wider text-[#737686] mb-4">Danh mục</h3>
+                            <h3 className="text-sm font-bold uppercase tracking-wider text-outline mb-4">Danh mục</h3>
                             <div className="space-y-4">
                                 <label className="flex items-center gap-3 cursor-pointer group">
                                     <input
@@ -139,9 +139,9 @@ export default function ProductList() {
                                         name="category"
                                         checked={categoryId === ''}
                                         onChange={() => { setCategoryId(''); setPage(1); }}
-                                        className="w-5 h-5 text-[#004ac6] cursor-pointer"
+                                        className="w-5 h-5 text-primary cursor-pointer"
                                     />
-                                    <span className="text-sm font-medium text-[#434655] group-hover:text-[#004ac6] transition-colors">Tất cả</span>
+                                    <span className="text-sm font-medium text-on-surface-variant group-hover:text-primary transition-colors">Tất cả</span>
                                 </label>
                                 {categories.map((cat, idx) => (
                                     <label
@@ -164,9 +164,9 @@ export default function ProductList() {
                                             }
                                             setPage(1);
                                         }}
-                                        className="w-5 h-5 text-[#004ac6] cursor-pointer"
+                                        className="w-5 h-5 text-primary cursor-pointer"
                                     />
-                                    <span className="text-sm font-medium text-[#434655] group-hover:text-[#004ac6] transition-colors">
+                                    <span className="text-sm font-medium text-on-surface-variant group-hover:text-primary transition-colors">
                                         {cat.categoryName}
                                     </span>
                                     </label>
@@ -176,11 +176,11 @@ export default function ProductList() {
 
                         {/* Khoảng giá */}
                         <div className="mb-10">
-                            <h3 className="text-sm font-bold uppercase tracking-wider text-[#737686] mb-4">Khoảng giá (VNĐ)</h3>
+                            <h3 className="text-sm font-bold uppercase tracking-wider text-outline mb-4">Khoảng giá (VNĐ)</h3>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="text-xs font-bold text-[#737686] block mb-1">Từ</label>
-                                    <div className="bg-white rounded-lg p-3 ghost-border focus-within:border-[#004ac6] transition-all">
+                                    <label className="text-xs font-bold text-outline block mb-1">Từ</label>
+                                    <div className="bg-white rounded-lg p-3 ghost-border focus-within:border-primary transition-all">
                                         <input
                                             type="number"
                                             value={minPrice}
@@ -191,8 +191,8 @@ export default function ProductList() {
                                     </div>
                                 </div>
                                 <div>
-                                    <label className="text-xs font-bold text-[#737686] block mb-1">Đến</label>
-                                    <div className="bg-white rounded-lg p-3 ghost-border focus-within:border-[#004ac6] transition-all">
+                                    <label className="text-xs font-bold text-outline block mb-1">Đến</label>
+                                    <div className="bg-white rounded-lg p-3 ghost-border focus-within:border-primary transition-all">
                                         <input
                                             type="number"
                                             value={maxPrice}
@@ -216,7 +216,7 @@ export default function ProductList() {
                             <button
                                 type="button"
                                 onClick={handleReset}
-                                className="block w-full text-[#004ac6] font-bold py-3 hover:bg-[#e6e8ea] rounded-lg transition-colors text-center"
+                                className="block w-full text-primary font-bold py-3 hover:bg-surface-container-high rounded-lg transition-colors text-center"
                             >
                                 Thiết lập lại
                             </button>
@@ -225,29 +225,29 @@ export default function ProductList() {
                 </aside>
 
                 {/* Lưới sản phẩm */}
-                <section className="flex-grow w-full">
+                <section className="grow w-full">
                     {isLoading ? (
-                        <div className="flex flex-col items-center justify-center min-h-64 text-[#737686] gap-4">
+                        <div className="flex flex-col items-center justify-center min-h-64 text-outline gap-4">
                             <span className="material-symbols-outlined text-5xl animate-spin">progress_activity</span>
                             <p className="font-medium">Đang tải sản phẩm...</p>
                         </div>
                     ) : isError ? (
-                        <div className="flex flex-col items-center justify-center min-h-64 text-[#ba1a1a] gap-4">
+                        <div className="flex flex-col items-center justify-center min-h-64 text-error gap-4">
                             <span className="material-symbols-outlined text-5xl">error</span>
                             <p className="font-medium">Không thể tải sản phẩm. Vui lòng thử lại.</p>
-                            <button onClick={handleReset} className="text-[#004ac6] font-bold hover:underline">Thử lại</button>
+                            <button onClick={handleReset} className="text-primary font-bold hover:underline">Thử lại</button>
                         </div>
                     ) : products.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center min-h-64 text-[#737686] gap-4">
+                        <div className="flex flex-col items-center justify-center min-h-64 text-outline gap-4">
                             <span className="material-symbols-outlined text-6xl">search_off</span>
                             <p className="text-lg font-medium">Không tìm thấy sản phẩm phù hợp.</p>
-                            <button onClick={handleReset} className="text-[#004ac6] font-bold hover:underline">
+                            <button onClick={handleReset} className="text-primary font-bold hover:underline">
                                 Xem tất cả sản phẩm
                             </button>
                         </div>
                     ) : (
                         <>
-                            <p className="text-sm text-[#737686] mb-6">Tìm thấy {pagination.total} sản phẩm</p>
+                            <p className="text-sm text-outline mb-6">Tìm thấy {pagination.total} sản phẩm</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 content-start items-start">
                                 {products.map((p) => (
                                     <ProductCard key={p.productId ?? p.id} product={p} />

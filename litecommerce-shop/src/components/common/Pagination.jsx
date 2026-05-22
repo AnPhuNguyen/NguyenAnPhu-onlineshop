@@ -10,8 +10,8 @@ export default function Pagination({ page, pageCount, onChange }) {
     const btnBase =
         'w-10 h-10 flex items-center justify-center rounded-lg font-bold transition-all text-sm';
     const btnActive = 'primary-gradient text-white shadow-lg scale-110 z-10';
-    const btnNormal = 'bg-white text-[#191c1e] hover:bg-[#e6e8ea] ambient-shadow';
-    const btnDisabled = 'opacity-30 cursor-not-allowed pointer-events-none bg-[#eceef0]';
+    const btnNormal = 'bg-white text-[#191c1e] hover:bg-surface-container-high ambient-shadow';
+    const btnDisabled = 'opacity-30 cursor-not-allowed pointer-events-none bg-surface-container';
 
     return (
         <div className="flex flex-wrap justify-center items-center mt-12 gap-2">

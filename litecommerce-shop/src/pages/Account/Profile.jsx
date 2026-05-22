@@ -51,29 +51,29 @@ export default function Profile() {
 
             <div className="flex flex-col md:flex-row gap-10">
                 {/* Sidebar */}
-                <div className="md:w-64 flex-shrink-0">
+                <div className="md:w-64 shrink-0">
                     <div className="bg-white rounded-xl p-6 ambient-shadow text-center mb-6">
                         <div className="w-20 h-20 rounded-full bg-[#b4c5ff] flex items-center justify-center mx-auto mb-4">
-                            <span className="material-symbols-outlined text-4xl text-[#004ac6]">person</span>
+                            <span className="material-symbols-outlined text-4xl text-primary">person</span>
                         </div>
                         <p className="font-bold text-[#191c1e]">{user?.customerName}</p>
-                        <p className="text-sm text-[#737686]">{user?.email}</p>
+                        <p className="text-sm text-outline">{user?.email}</p>
                     </div>
                     <nav className="space-y-2">
-                        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#b4c5ff] text-[#004ac6] font-bold">
+                        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#b4c5ff] text-primary font-bold">
                             <span className="material-symbols-outlined">person</span>
                             Thông tin cá nhân
                         </div>
                         <Link
                             to="/orders"
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#191c1e] hover:bg-[#f2f4f6] font-medium transition-colors"
+                            className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#191c1e] hover:bg-surface-container-low font-medium transition-colors"
                         >
                             <span className="material-symbols-outlined">receipt_long</span>
                             Đơn hàng của tôi
                         </Link>
                         <Link
                             to="/change-password"
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#191c1e] hover:bg-[#f2f4f6] font-medium transition-colors"
+                            className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#191c1e] hover:bg-surface-container-low font-medium transition-colors"
                         >
                             <span className="material-symbols-outlined">lock_reset</span>
                             Đổi mật khẩu
@@ -82,51 +82,51 @@ export default function Profile() {
                 </div>
 
                 {/* Form */}
-                <div className="flex-grow">
+                <div className="grow">
                     <form onSubmit={handleSubmit} className="bg-white rounded-xl p-8 ambient-shadow">
                         <h2 className="text-xl font-bold mb-6">Cập nhật thông tin</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Full name */}
                             <div className="md:col-span-2">
-                                <label className="text-sm font-bold text-[#737686] block mb-2">
-                                    Họ tên <span className="text-[#ba1a1a]">*</span>
+                                <label className="text-sm font-bold text-outline block mb-2">
+                                    Họ tên <span className="text-error">*</span>
                                 </label>
                                 <input
                                     type="text"
                                     required
                                     value={form.customerName}
                                     onChange={(e) => setForm({ ...form, customerName: e.target.value })}
-                                    className="w-full bg-[#eceef0] rounded-xl px-4 py-3 border border-[#c3c6d7] focus:border-[#004ac6] focus:ring-0 outline-none text-sm font-medium transition-all"
+                                    className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant focus:border-primary focus:ring-0 outline-none text-sm font-medium transition-all"
                                 />
                             </div>
                             {/* Email (readonly) */}
                             <div className="md:col-span-2">
-                                <label className="text-sm font-bold text-[#737686] block mb-2">Email</label>
+                                <label className="text-sm font-bold text-outline block mb-2">Email</label>
                                 <input
                                     type="email"
                                     readOnly
                                     value={user?.email}
-                                    className="w-full bg-[#eceef0] rounded-xl px-4 py-3 border border-[#c3c6d7] text-sm font-medium text-[#737686] cursor-not-allowed"
+                                    className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant text-sm font-medium text-outline cursor-not-allowed"
                                 />
                             </div>
                             {/* Phone */}
                             <div>
-                                <label className="text-sm font-bold text-[#737686] block mb-2">Điện thoại</label>
+                                <label className="text-sm font-bold text-outline block mb-2">Điện thoại</label>
                                 <input
                                     type="tel"
                                     value={form.phone}
                                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                                     placeholder="Số điện thoại"
-                                    className="w-full bg-[#eceef0] rounded-xl px-4 py-3 border border-[#c3c6d7] focus:border-[#004ac6] focus:ring-0 outline-none text-sm font-medium transition-all"
+                                    className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant focus:border-primary focus:ring-0 outline-none text-sm font-medium transition-all"
                                 />
                             </div>
                             {/* Province */}
                             <div>
-                                <label className="text-sm font-bold text-[#737686] block mb-2">Tỉnh/Thành phố</label>
+                                <label className="text-sm font-bold text-outline block mb-2">Tỉnh/Thành phố</label>
                                 <select
                                     value={form.province}
                                     onChange={(e) => setForm({ ...form, province: e.target.value })}
-                                    className="w-full bg-[#eceef0] rounded-xl px-4 py-3 border border-[#c3c6d7] focus:border-[#004ac6] focus:ring-0 outline-none text-sm font-medium transition-all"
+                                    className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant focus:border-primary focus:ring-0 outline-none text-sm font-medium transition-all"
                                 >
                                     <option value="">-- Chọn tỉnh/thành --</option>
                                     {PROVINCES.map((p) => (
@@ -136,13 +136,13 @@ export default function Profile() {
                             </div>
                             {/* Address */}
                             <div className="md:col-span-2">
-                                <label className="text-sm font-bold text-[#737686] block mb-2">Địa chỉ</label>
+                                <label className="text-sm font-bold text-outline block mb-2">Địa chỉ</label>
                                 <input
                                     type="text"
                                     value={form.address}
                                     onChange={(e) => setForm({ ...form, address: e.target.value })}
                                     placeholder="Số nhà, đường, phường/xã..."
-                                    className="w-full bg-[#eceef0] rounded-xl px-4 py-3 border border-[#c3c6d7] focus:border-[#004ac6] focus:ring-0 outline-none text-sm font-medium transition-all"
+                                    className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant focus:border-primary focus:ring-0 outline-none text-sm font-medium transition-all"
                                 />
                             </div>
                         </div>

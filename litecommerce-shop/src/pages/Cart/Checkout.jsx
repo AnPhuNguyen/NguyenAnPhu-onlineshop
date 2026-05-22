@@ -30,8 +30,8 @@ export default function Checkout() {
 
     if (items.length === 0) {
         return (
-            <div className="max-w-6xl mx-auto px-6 py-20 text-center text-[#737686]">
-                <p>Giỏ hàng trống. <Link to="/products" className="text-[#004ac6] font-bold hover:underline">Quay lại mua hàng</Link></p>
+            <div className="max-w-6xl mx-auto px-6 py-20 text-center text-outline">
+                <p>Giỏ hàng trống. <Link to="/products" className="text-primary font-bold hover:underline">Quay lại mua hàng</Link></p>
             </div>
         );
     }
@@ -66,31 +66,31 @@ export default function Checkout() {
             <form onSubmit={handleSubmit}>
                 <div className="flex flex-col lg:flex-row gap-10">
                     {/* Thông tin giao nhận */}
-                    <div className="flex-grow space-y-6">
+                    <div className="grow space-y-6">
                         <div className="bg-white rounded-xl p-8 ambient-shadow">
                             <h2 className="text-xl font-bold mb-6">Thông tin giao hàng</h2>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
-                                    <label className="text-sm font-bold text-[#737686] block mb-2">Tỉnh/Thành phố <span className="text-[#ba1a1a]">*</span></label>
+                                    <label className="text-sm font-bold text-outline block mb-2">Tỉnh/Thành phố <span className="text-error">*</span></label>
                                     <select
                                         required
                                         value={deliveryProvince}
                                         onChange={(e) => setDeliveryProvince(e.target.value)}
-                                        className="w-full bg-[#eceef0] rounded-xl px-4 py-3 border border-[#c3c6d7] focus:border-[#004ac6] focus:ring-0 outline-none text-sm font-medium transition-all"
+                                        className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant focus:border-primary focus:ring-0 outline-none text-sm font-medium transition-all"
                                     >
                                         <option value="">-- Chọn tỉnh/thành --</option>
                                         {PROVINCES.map((p) => <option key={p} value={p}>{p}</option>)}
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="text-sm font-bold text-[#737686] block mb-2">Địa chỉ chi tiết <span className="text-[#ba1a1a]">*</span></label>
+                                    <label className="text-sm font-bold text-outline block mb-2">Địa chỉ chi tiết <span className="text-error">*</span></label>
                                     <input
                                         type="text"
                                         required
                                         value={deliveryAddress}
                                         onChange={(e) => setDeliveryAddress(e.target.value)}
                                         placeholder="Số nhà, tên đường..."
-                                        className="w-full bg-[#eceef0] rounded-xl px-4 py-3 border border-[#c3c6d7] focus:border-[#004ac6] focus:ring-0 outline-none text-sm font-medium transition-all"
+                                        className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant focus:border-primary focus:ring-0 outline-none text-sm font-medium transition-all"
                                     />
                                 </div>
                             </div>
@@ -99,19 +99,19 @@ export default function Checkout() {
                         {/* Sản phẩm */}
                         <div className="bg-white rounded-xl p-8 ambient-shadow">
                             <h2 className="text-xl font-bold mb-6">Đơn hàng của bạn</h2>
-                            <div className="divide-y divide-[#c3c6d7]">
+                            <div className="divide-y divide-outline-variant">
                                 {items.map((item) => (
                                     <div key={item.productId} className="flex items-center gap-4 py-4">
-                                        <div className="w-12 h-12 bg-[#eceef0] rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                        <div className="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
                                             {item.photo ? (
                                                 <img src={item.photo} alt={item.productName} className="w-full h-full object-cover rounded-lg" />
                                             ) : (
-                                                <span className="material-symbols-outlined text-[#737686]">inventory_2</span>
+                                                <span className="material-symbols-outlined text-outline">inventory_2</span>
                                             )}
                                         </div>
-                                        <div className="flex-grow min-w-0">
+                                        <div className="grow min-w-0">
                                             <p className="font-bold text-[#191c1e] truncate text-sm">{item.productName}</p>
-                                            <p className="text-xs text-[#737686]">{item.quantity} x {formatPrice(item.price)}</p>
+                                            <p className="text-xs text-outline">{item.quantity} x {formatPrice(item.price)}</p>
                                         </div>
                                         <p className="font-bold text-[#191c1e] text-sm">{formatPrice(item.price * item.quantity)}</p>
                                     </div>
@@ -121,22 +121,22 @@ export default function Checkout() {
                     </div>
 
                     {/* Tổng kết */}
-                    <div className="lg:w-80 flex-shrink-0">
+                    <div className="lg:w-80 shrink-0">
                         <div className="bg-white rounded-xl p-8 ambient-shadow sticky top-28">
                             <h2 className="text-xl font-bold mb-6">Tổng đơn hàng</h2>
-                            <div className="space-y-3 border-b border-[#c3c6d7] pb-5 mb-5">
+                            <div className="space-y-3 border-b border-outline-variant pb-5 mb-5">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-[#737686]">Tạm tính</span>
+                                    <span className="text-outline">Tạm tính</span>
                                     <span className="font-bold">{formatPrice(subtotal)}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-[#737686]">Phí vận chuyển</span>
+                                    <span className="text-outline">Phí vận chuyển</span>
                                     <span className="font-bold text-green-600">Miễn phí</span>
                                 </div>
                             </div>
                             <div className="flex justify-between font-black text-lg mb-8">
                                 <span>Tổng cộng</span>
-                                <span className="text-[#004ac6]">{formatPrice(subtotal)}</span>
+                                <span className="text-primary">{formatPrice(subtotal)}</span>
                             </div>
                             <button
                                 type="submit"
@@ -145,7 +145,7 @@ export default function Checkout() {
                             >
                                 {orderLoading ? 'Đang xử lý...' : 'Đặt hàng ngay'}
                             </button>
-                            <Link to="/cart" className="block text-center text-[#004ac6] font-bold mt-4 hover:underline">Quay lại giỏ hàng</Link>
+                            <Link to="/cart" className="block text-center text-primary font-bold mt-4 hover:underline">Quay lại giỏ hàng</Link>
                         </div>
                     </div>
                 </div>

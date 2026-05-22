@@ -70,7 +70,7 @@ export default function OrderList() {
                         onClick={() => handleStatusChange(tab.value)}
                         className={`px-5 py-2 rounded-full font-bold text-sm whitespace-nowrap transition-all ${statusFilter === tab.value
                             ? 'primary-gradient text-white shadow-lg shadow-blue-500/20'
-                            : 'bg-white text-[#191c1e] hover:bg-[#f2f4f6] ambient-shadow'
+                            : 'bg-white text-[#191c1e] hover:bg-surface-container-low ambient-shadow'
                             }`}
                     >
                         {tab.label}
@@ -79,7 +79,7 @@ export default function OrderList() {
             </div>
 
             {isLoading ? (
-                <div className="flex flex-col items-center justify-center min-h-64 text-[#737686] gap-4">
+                <div className="flex flex-col items-center justify-center min-h-64 text-outline gap-4">
                     <span className="material-symbols-outlined text-5xl animate-spin">progress_activity</span>
                     <p className="font-medium">Đang tải danh sách đơn hàng...</p>
                 </div>
@@ -90,7 +90,7 @@ export default function OrderList() {
                     <p className="text-sm opacity-75">Vui lòng thử lại sau</p>
                 </div>
             ) : orders.length === 0 ? (
-                <div className="flex flex-col items-center justify-center min-h-64 text-[#737686] gap-4">
+                <div className="flex flex-col items-center justify-center min-h-64 text-outline gap-4">
                     <span className="material-symbols-outlined text-7xl">receipt_long</span>
                     <p className="text-xl font-medium">Bạn chưa có đơn hàng nào trong mục này</p>
                     <Link to="/products" className="primary-gradient text-white px-8 py-3 rounded-xl font-bold hover:opacity-90 transition-all">Mua hàng ngay</Link>
@@ -101,21 +101,21 @@ export default function OrderList() {
                         {orders.map((order) => (
                             <div
                                 key={order.orderId}
-                                className="bg-white rounded-xl p-6 ambient-shadow flex items-center justify-between gap-4 border border-transparent hover:border-[#004ac6]/20 transition-all group"
+                                className="bg-white rounded-xl p-6 ambient-shadow flex items-center justify-between gap-4 border border-transparent hover:border-primary/20 transition-all group"
                             >
                                 <div className="min-w-0">
                                     <p className="font-bold text-[#191c1e] text-lg">Đơn #{order.orderId}</p>
-                                    <p className="text-sm text-[#737686] mt-1">{formatDate(order.orderTime)}</p>
-                                    <p className="text-sm text-[#737686] mt-1 flex items-center gap-1 truncate max-w-md">
+                                    <p className="text-sm text-outline mt-1">{formatDate(order.orderTime)}</p>
+                                    <p className="text-sm text-outline mt-1 flex items-center gap-1 truncate max-w-md">
                                         <span className="material-symbols-outlined text-sm">location_on</span>
                                         {order.deliveryAddress}, {order.deliveryProvince}
                                     </p>
                                 </div>
-                                <div className="flex items-center gap-4 flex-shrink-0">
+                                <div className="flex items-center gap-4 shrink-0">
                                     <OrderStatusBadge status={order.orderStatus} />
                                     <Link
                                         to={`/orders/detail/${order.orderId}`}
-                                        className="text-[#004ac6] font-bold text-sm px-4 py-2 hover:bg-[#f2f4f6] rounded-lg transition-all flex items-center gap-1 group-hover:gap-2"
+                                        className="text-primary font-bold text-sm px-4 py-2 hover:bg-surface-container-low rounded-lg transition-all flex items-center gap-1 group-hover:gap-2"
                                     >
                                         Chi tiết
                                         <span className="material-symbols-outlined text-sm">chevron_right</span>

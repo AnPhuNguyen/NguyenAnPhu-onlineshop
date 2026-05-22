@@ -60,7 +60,7 @@ export default function OrderDetail() {
 
     if (isLoading) {
         return (
-            <div className="max-w-4xl mx-auto px-6 py-20 flex flex-col items-center gap-4 text-[#737686]">
+            <div className="max-w-4xl mx-auto px-6 py-20 flex flex-col items-center gap-4 text-outline">
                 <span className="material-symbols-outlined text-5xl animate-spin">progress_activity</span>
                 <p className="font-medium">Đang tải thông tin đơn hàng...</p>
             </div>
@@ -70,10 +70,10 @@ export default function OrderDetail() {
     if (isError || !order) {
         return (
             <div className="max-w-4xl mx-auto px-6 py-12">
-                <div className="bg-[#f2f4f6] rounded-2xl p-12 text-center text-[#737686]">
+                <div className="bg-surface-container-low rounded-2xl p-12 text-center text-outline">
                     <span className="material-symbols-outlined text-6xl mb-4">search_off</span>
                     <p className="text-lg">Không tìm thấy thông tin đơn hàng.</p>
-                    <Link to="/orders" className="text-[#004ac6] font-bold hover:underline mt-4 inline-block">Quay lại danh sách đơn hàng</Link>
+                    <Link to="/orders" className="text-primary font-bold hover:underline mt-4 inline-block">Quay lại danh sách đơn hàng</Link>
                 </div>
             </div>
         );
@@ -86,7 +86,7 @@ export default function OrderDetail() {
     return (
         <div className="max-w-4xl mx-auto px-6 py-12">
             <div className="flex items-center gap-4 mb-8">
-                <Link to="/orders" className="p-2 hover:bg-[#eceef0] rounded-full transition-all group">
+                <Link to="/orders" className="p-2 hover:bg-surface-container rounded-full transition-all group">
                     <span className="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
                 </Link>
                 <h1 className="text-3xl font-extrabold" style={{ fontFamily: "'Manrope', sans-serif" }}>Chi tiết đơn hàng #{order.orderId}</h1>
@@ -106,21 +106,21 @@ export default function OrderDetail() {
                     <div className="bg-white rounded-xl p-8 ambient-shadow">
                         <div className="flex items-start justify-between mb-8">
                             <div>
-                                <p className="text-sm font-bold text-[#737686] uppercase tracking-wider mb-2">Trạng thái</p>
+                                <p className="text-sm font-bold text-outline uppercase tracking-wider mb-2">Trạng thái</p>
                                 <OrderStatusBadge status={order.orderStatus} />
                             </div>
                             <div className="text-right">
-                                <p className="text-sm font-bold text-[#737686] uppercase tracking-wider mb-1">Ngày đặt</p>
+                                <p className="text-sm font-bold text-outline uppercase tracking-wider mb-1">Ngày đặt</p>
                                 <p className="font-bold text-[#191c1e]">{formatDate(order.orderTime)}</p>
                             </div>
                         </div>
 
-                        <div className="border border-[#c3c6d7]/20 rounded-xl p-6 bg-[#f8f9fa]">
+                        <div className="border border-outline-variant/20 rounded-xl p-6 bg-[#f8f9fa]">
                             <div className="flex gap-3">
-                                <span className="material-symbols-outlined text-[#737686]">location_on</span>
+                                <span className="material-symbols-outlined text-outline">location_on</span>
                                 <div className="min-w-0">
                                     <p className="text-sm font-bold text-[#191c1e] mb-1">Địa chỉ giao hàng</p>
-                                    <p className="text-sm text-[#434655] leading-relaxed">
+                                    <p className="text-sm text-on-surface-variant leading-relaxed">
                                         {order.deliveryAddress}, {order.deliveryProvince}
                                     </p>
                                 </div>
@@ -130,34 +130,34 @@ export default function OrderDetail() {
 
                     {/* Danh sách sản phẩm */}
                     <div className="bg-white rounded-xl overflow-hidden ambient-shadow">
-                        <div className="p-6 border-b border-[#c3c6d7]/50 bg-gray-50/50">
+                        <div className="p-6 border-b border-outline-variant/50 bg-gray-50/50">
                             <h2 className="font-bold text-lg">Sản phẩm đã đặt</h2>
                         </div>
-                        <div className="divide-y divide-[#c3c6d7]/30">
+                        <div className="divide-y divide-outline-variant/30">
                             {(order.details || []).map((item, i) => (
                                 <div key={i} className="p-6 flex items-center gap-4">
-                                    <div className="w-16 h-16 bg-[#eceef0] rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
+                                    <div className="w-16 h-16 bg-surface-container rounded-lg flex items-center justify-center overflow-hidden shrink-0">
                                         {item.photo ? (
                                             <img src={item.photo} alt={item.productName} className="object-cover w-full h-full" />
                                         ) : (
-                                            <span className="material-symbols-outlined text-[#737686]">inventory_2</span>
+                                            <span className="material-symbols-outlined text-outline">inventory_2</span>
                                         )}
                                     </div>
-                                    <div className="flex-grow min-w-0">
+                                    <div className="grow min-w-0">
                                         <p className="font-bold text-[#191c1e] truncate">{item.productName}</p>
-                                        <p className="text-sm text-[#737686]">
+                                        <p className="text-sm text-outline">
                                             {item.quantity} x {formatPrice(item.salePrice)}
                                         </p>
                                     </div>
-                                    <div className="text-right flex-shrink-0">
+                                    <div className="text-right shrink-0">
                                         <p className="font-black text-[#191c1e] font-mono">{formatPrice(item.salePrice * item.quantity)}</p>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <div className="p-6 bg-[#f2f4f6] flex justify-between items-center border-t border-[#c3c6d7]/50">
+                        <div className="p-6 bg-surface-container-low flex justify-between items-center border-t border-outline-variant/50">
                             <span className="font-bold text-[#191c1e]">Tổng cộng</span>
-                            <span className="text-2xl font-black text-[#004ac6] font-mono">{formatPrice(totalAmount)}</span>
+                            <span className="text-2xl font-black text-primary font-mono">{formatPrice(totalAmount)}</span>
                         </div>
                     </div>
                 </div>
@@ -172,16 +172,16 @@ export default function OrderDetail() {
                                 return (
                                     <div key={step.key} className="relative pl-10">
                                         <div
-                                            className={`absolute left-0 top-1 w-6 h-6 rounded-full flex items-center justify-center z-10 transition-colors ${done ? 'bg-[#004ac6] text-white shadow-md' : 'bg-gray-200 text-gray-400'
+                                            className={`absolute left-0 top-1 w-6 h-6 rounded-full flex items-center justify-center z-10 transition-colors ${done ? 'bg-primary text-white shadow-md' : 'bg-gray-200 text-gray-400'
                                                 }`}
                                         >
                                             <span className="material-symbols-outlined text-[14px]">
                                                 {done ? step.icon : step.pendingIcon}
                                             </span>
                                         </div>
-                                        <p className={`text-sm font-bold ${done ? 'text-[#191c1e]' : 'text-[#737686]'}`}>{step.label}</p>
+                                        <p className={`text-sm font-bold ${done ? 'text-[#191c1e]' : 'text-outline'}`}>{step.label}</p>
                                         {done && (
-                                            <p className="text-xs text-[#737686] mt-0.5">{formatDate(order[step.key])}</p>
+                                            <p className="text-xs text-outline mt-0.5">{formatDate(order[step.key])}</p>
                                         )}
                                     </div>
                                 );
@@ -192,7 +192,7 @@ export default function OrderDetail() {
                     {canCancel && (
                         <button
                             onClick={handleCancel}
-                            className="w-full bg-red-50 text-[#ba1a1a] font-bold py-4 rounded-xl border border-red-100 hover:bg-red-100 transition-all active:scale-95 flex items-center justify-center gap-2"
+                            className="w-full bg-red-50 text-error font-bold py-4 rounded-xl border border-red-100 hover:bg-red-100 transition-all active:scale-95 flex items-center justify-center gap-2"
                         >
                             <span className="material-symbols-outlined text-xl">cancel</span>
                             Hủy đơn hàng
