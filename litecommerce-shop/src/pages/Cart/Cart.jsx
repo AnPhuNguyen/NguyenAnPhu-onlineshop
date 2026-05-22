@@ -1,6 +1,8 @@
 // src/pages/Cart/Cart.jsx
-// Trang giỏ hàng – đồng bộ với session trên backend
-import { Link, useNavigate } from 'react-router-dom';
+/**
+ * Trang giỏ hàng – đồng bộ với session trên backend
+ */
+import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useCartStore } from '../../store/cartStore';
 import { useAuthStore } from '../../store/authStore';
@@ -12,7 +14,6 @@ function formatPrice(price) {
 export default function Cart() {
     const { items, updateQuantity, removeItem, clearCart, getSubtotal, loadCart, loading } = useCartStore();
     const { isAuthenticated } = useAuthStore();
-    const navigate = useNavigate();
     const subtotal = getSubtotal();
 
     // Tải thông tin giỏ hàng từ server khi mount

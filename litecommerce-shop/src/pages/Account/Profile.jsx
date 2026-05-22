@@ -1,5 +1,5 @@
 // src/pages/Profile.jsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { PROVINCES } from '../../data/mockData';
@@ -8,18 +8,27 @@ export default function Profile() {
     const { user, isAuthenticated, updateProfile } = useAuthStore();
     const navigate = useNavigate();
 
-    if (!isAuthenticated) {
-        navigate('/login', { state: { from: '/profile' } });
-        return null;
-    }
-
+    // Always keep hooks declared before any conditional returns
     const [form, setForm] = useState({
-        customerName: user?.customerName || '',
-        phone: user?.phone || '',
-        province: user?.province || '',
-        address: user?.address || '',
+        customerName: '',
+        phone: '',
+        province: '',
+        address: '',
     });
     const [success, setSuccess] = useState('');
+
+    useEffect(() => {
+        console.log('[Profile] auth state', { isAuthenticated, user });
+    }, [isAuthenticated, user]);
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            console.warn('[Profile] not authenticated -> redirecting to /login', { from: '/profile' });
+            navigate('/login', { state: { from: '/profile' } });
+        }
+    }, [isAuthenticated, navigate]);
+
+    if (!isAuthenticated) return null;
 
     const handleSubmit = (e) => {
         e.preventDefault();

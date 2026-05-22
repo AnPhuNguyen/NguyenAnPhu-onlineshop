@@ -24,27 +24,59 @@ export default function ProductList() {
     });
 
     // Đảm bảo categories luôn là mảng để tránh lỗi .map()
-    const categories = Array.isArray(categoriesData)
-        ? categoriesData
-        : (categoriesData?.categories && Array.isArray(categoriesData.categories) ? categoriesData.categories : []);
+    // Backend response shape: { success, data: Category[] } with fields like:
+    // - CategoryID
+    // - CategoryName
+    const categories = Array.isArray(categoriesData?.data)
+        ? categoriesData.data
+              .map((c) => {
+                  const rawId = c.CategoryID ?? c.categoryId ?? c.id;
+                  const idNum = Number(rawId);
+                  return {
+                      categoryId: idNum,
+                      categoryName: c.CategoryName ?? c.categoryName ?? c.name,
+                  };
+              })
+              // Filter out unusable categories (backend expects a valid numeric id)
+              .filter((c) => Number.isInteger(c.categoryId) && c.categoryName)
+        : [];
 
     // ─── Lấy sản phẩm theo bộ lọc ─────────────────────────────────────────────
     const { data, isLoading, isError } = useQuery({
         queryKey: ['products', { search, categoryId, minPrice, maxPrice, page }],
-        queryFn: () =>
-            getProductsApi({
+        queryFn: () => {
+            // Guard against "undefined" string (seen in logs) -> treat as no category filter
+            const finalCategoryIdRaw =
+                categoryId === '' || categoryId === undefined || categoryId === 'undefined'
+                    ? undefined
+                    : Number(categoryId);
+
+            const finalCategoryId =
+                finalCategoryIdRaw !== undefined && Number.isInteger(finalCategoryIdRaw) ? finalCategoryIdRaw : undefined;
+
+            const finalMinPrice = minPrice === '' ? undefined : minPrice;
+            const finalMaxPrice = maxPrice === '' ? undefined : maxPrice;
+
+            return getProductsApi({
                 search: search || undefined,
-                categoryId: categoryId || undefined,
-                minPrice: minPrice || undefined,
-                maxPrice: maxPrice || undefined,
+                categoryId: finalCategoryId,
+                minPrice: finalMinPrice,
+                maxPrice: finalMaxPrice,
                 page,
                 limit: PAGE_SIZE,
-            }),
+            });
+        },
         keepPreviousData: true,
     });
 
-    const products = data?.products ?? [];
-    const pagination = data?.pagination ?? { page: 1, totalPages: 1, total: 0 };
+    // Debug logs kept temporarily in other layers (api/orderApi/productApi).
+    // Remove noisy console output here.
+
+    // Additional debug: ensure ProductCard receives the expected props
+    // Backend response shape: { success, data: { products: Product[], pagination } }
+    const products = data?.data?.products ?? [];
+    const pagination = data?.data?.pagination ?? { page: 1, totalPages: 1, total: 0 };
+
 
     // ─── Handlers ──────────────────────────────────────────────────────────────
     const handleSearch = (e) => {
@@ -111,18 +143,32 @@ export default function ProductList() {
                                     />
                                     <span className="text-sm font-medium text-[#434655] group-hover:text-[#004ac6] transition-colors">Tất cả</span>
                                 </label>
-                                {categories.map((cat) => (
-                                    <label key={cat.categoryId ?? cat.id} className="flex items-center gap-3 cursor-pointer group">
-                                        <input
-                                            type="radio"
-                                            name="category"
-                                            checked={categoryId === String(cat.categoryId ?? cat.id)}
-                                            onChange={() => { setCategoryId(String(cat.categoryId ?? cat.id)); setPage(1); }}
-                                            className="w-5 h-5 text-[#004ac6] cursor-pointer"
-                                        />
-                                        <span className="text-sm font-medium text-[#434655] group-hover:text-[#004ac6] transition-colors">
-                                            {cat.categoryName ?? cat.name}
-                                        </span>
+                                {categories.map((cat, idx) => (
+                                    <label
+                                        key={`${cat.categoryId}-${idx}`}
+                                        className="flex items-center gap-3 cursor-pointer group"
+                                    >
+                                    <input
+                                        type="radio"
+                                        name="category"
+                                        checked={
+                                            categoryId !== '' &&
+                                            typeof cat.categoryId === 'number' &&
+                                            String(categoryId) === String(cat.categoryId)
+                                        }
+                                        onChange={() => {
+                                            if (typeof cat.categoryId === 'number' && Number.isInteger(cat.categoryId)) {
+                                                setCategoryId(String(cat.categoryId));
+                                            } else {
+                                                setCategoryId('');
+                                            }
+                                            setPage(1);
+                                        }}
+                                        className="w-5 h-5 text-[#004ac6] cursor-pointer"
+                                    />
+                                    <span className="text-sm font-medium text-[#434655] group-hover:text-[#004ac6] transition-colors">
+                                        {cat.categoryName}
+                                    </span>
                                     </label>
                                 ))}
                             </div>
