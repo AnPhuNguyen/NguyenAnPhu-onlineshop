@@ -166,7 +166,7 @@ export default function OrderDetail() {
                 <div className="space-y-6">
                     <div className="bg-white rounded-xl p-8 ambient-shadow">
                         <h2 className="font-bold text-lg mb-6">Tiến độ</h2>
-                        <div className="space-y-8 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-gray-100">
+                        <div className="space-y-8 relative before:absolute before:left-2.75 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-100">
                             {steps.map((step) => {
                                 const done = !!order[step.key];
                                 return (

@@ -127,7 +127,7 @@ export default function Cart() {
                                 </div>
 
                                 {/* Thành tiền */}
-                                <div className="text-right min-w-[120px]">
+                                <div className="text-right min-w-30">
                                     <p className="font-black text-[#191c1e]">{formatPrice(item.price * item.quantity)}</p>
                                 </div>
 
