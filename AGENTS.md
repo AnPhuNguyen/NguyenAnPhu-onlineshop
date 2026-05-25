@@ -22,7 +22,7 @@ Multi-context project (Shop, Admin, Backend). See `docs/agents/domain.md`.
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **NguyenAnPhu-onlineshop** (1709 symbols, 3529 relationships, 56 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **NguyenAnPhu-onlineshop** (5376 symbols, 10678 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
