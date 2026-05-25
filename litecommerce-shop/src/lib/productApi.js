@@ -41,7 +41,9 @@ export const getProductDetailApi = async (id) => {
     try {
         const r = await api.get(`/shop/products/${id}`);
         console.log('[productApi][getProductDetailApi] response', r?.data);
-        return r.data;
+        // backend trả về dạng: { success, data, message }
+        // frontend ProductDetail.jsx kỳ vọng nhận trực tiếp object product
+        return r?.data?.data ?? r.data;
     } catch (err) {
         logApiError('getProductDetailApi', err);
         throw err;
