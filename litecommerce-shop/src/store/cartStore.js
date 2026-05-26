@@ -10,6 +10,28 @@ import {
     clearCartApi,
 } from '../lib/cartApi';
 
+const ACCESS_TOKEN_COOKIE_NAME = 'access_token';
+
+function getCookie(name) {
+    try {
+        const cookies = document.cookie ? document.cookie.split('; ') : [];
+        const prefix = `${encodeURIComponent(name)}=`;
+        for (const c of cookies) {
+            if (c.startsWith(prefix)) {
+                return decodeURIComponent(c.substring(prefix.length));
+            }
+        }
+        return null;
+    } catch {
+        return null;
+    }
+}
+
+function hasAccessTokenCookie() {
+    const token = getCookie(ACCESS_TOKEN_COOKIE_NAME);
+    return !!token;
+}
+
 /**
  * Store giỏ hàng – lưu trạng thái giỏ hàng đồng bộ với backend.
  * items: [{ productId, productName, price, quantity, total }]
@@ -37,7 +59,7 @@ export const useCartStore = create((set, get) => ({
      * Tải giỏ hàng từ server (gọi khi đăng nhập hoặc mount trang Cart)
      */
     async loadCart() {
-        if (!localStorage.getItem('litecommerce_token')) return;
+        if (!hasAccessTokenCookie()) return;
         set({ loading: true, error: null });
         try {
             const cart = await getCartApi();

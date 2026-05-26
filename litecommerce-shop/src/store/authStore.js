@@ -4,9 +4,28 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { loginApi, registerApi, changePasswordApi } from '../lib/authApi';
 
+const ACCESS_TOKEN_COOKIE_NAME = 'access_token'; // cookie name used by backend auth response
+
+function setCookie(name, value, options = {}) {
+    const { path = '/', maxAgeSeconds, secure = true } = options;
+
+    let cookie = `${encodeURIComponent(name)}=${encodeURIComponent(value ?? '')}`;
+    if (path) cookie += `; Path=${path}`;
+    if (typeof maxAgeSeconds === 'number') cookie += `; Max-Age=${maxAgeSeconds}`;
+
+    if (secure) cookie += `; Secure`;
+    cookie += '; SameSite=Lax';
+
+    document.cookie = cookie;
+}
+
+function removeCookie(name) {
+    document.cookie = `${encodeURIComponent(name)}=; Path=/; Max-Age=0; SameSite=Lax; Secure`;
+}
+
 /**
  * Store xác thực – lưu thông tin user và trạng thái đăng nhập.
- * JWT token được lưu riêng trong localStorage và đính kèm bởi Axios interceptor.
+ * JWT token được lưu trong cookie `accedd_token` để tự động auth.
  */
 export const useAuthStore = create(
     persist(
@@ -21,10 +40,36 @@ export const useAuthStore = create(
             login: async (email, password) => {
                 try {
                     const data = await loginApi(email, password);
-                    localStorage.setItem('litecommerce_token', data.access_token);
-                    set({ user: data.user, isAuthenticated: true });
+
+                    // Temporary debug logs to inspect backend response shape
+                    // eslint-disable-next-line no-console
+                    console.log('[authStore][login] backend response:', data);
+
+                    const accessToken = data?.data?.access_token;
+                    const user = data?.data?.user;
+
+                    if (!accessToken) {
+                        // eslint-disable-next-line no-console
+                        console.error('[authStore][login] missing access_token (expected data.data.access_token)');
+                    }
+
+                    setCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
+                        maxAgeSeconds: 60 * 60 * 24 * 7,
+                    });
+
+                    // eslint-disable-next-line no-console
+                    console.log(
+                        '[authStore][login] set cookie:',
+                        ACCESS_TOKEN_COOKIE_NAME,
+                        'len=',
+                        accessToken?.length,
+                    );
+
+                    set({ user, isAuthenticated: true });
                     return { success: true };
                 } catch (err) {
+                    // eslint-disable-next-line no-console
+                    console.error('[authStore][login] error:', err?.response?.data ?? err?.message ?? err);
                     const message =
                         err.response?.data?.message || 'Email hoặc mật khẩu không đúng';
                     return { success: false, message };
@@ -37,12 +82,37 @@ export const useAuthStore = create(
             register: async (data) => {
                 try {
                     await registerApi(data);
-                    // Tự động đăng nhập sau khi đăng ký thành công
+
                     const loginData = await loginApi(data.email, data.password);
-                    localStorage.setItem('litecommerce_token', loginData.access_token);
-                    set({ user: loginData.user, isAuthenticated: true });
+
+                    // eslint-disable-next-line no-console
+                    console.log('[authStore][register] backend login response:', loginData);
+
+                    const accessToken = loginData?.data?.access_token;
+                    const user = loginData?.data?.user;
+
+                    if (!accessToken) {
+                        // eslint-disable-next-line no-console
+                        console.error('[authStore][register] missing access_token (expected data.data.access_token)');
+                    }
+
+                    setCookie(ACCESS_TOKEN_COOKIE_NAME, accessToken, {
+                        maxAgeSeconds: 60 * 60 * 24 * 7,
+                    });
+
+                    // eslint-disable-next-line no-console
+                    console.log(
+                        '[authStore][register] set cookie:',
+                        ACCESS_TOKEN_COOKIE_NAME,
+                        'len=',
+                        accessToken?.length,
+                    );
+
+                    set({ user, isAuthenticated: true });
                     return { success: true };
                 } catch (err) {
+                    // eslint-disable-next-line no-console
+                    console.error('[authStore][register] error:', err?.response?.data ?? err?.message ?? err);
                     const message =
                         err.response?.data?.message || 'Đăng ký thất bại';
                     return { success: false, message };
@@ -53,7 +123,7 @@ export const useAuthStore = create(
              * Đăng xuất – xóa token và reset state
              */
             logout: () => {
-                localStorage.removeItem('litecommerce_token');
+                removeCookie(ACCESS_TOKEN_COOKIE_NAME);
                 set({ user: null, isAuthenticated: false });
             },
 
@@ -89,9 +159,8 @@ export const useAuthStore = create(
         }),
         {
             name: 'litecommerce-auth',
-            // Chỉ persist user info, không persist token (token đã trong localStorage riêng)
+            // Chỉ persist user info, không persist token (token nằm trong cookie)
             partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
         },
     ),
 );
-
