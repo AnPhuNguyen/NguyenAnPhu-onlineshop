@@ -48,10 +48,12 @@ export const useCartStore = create((set, get) => ({
      * Cập nhật state từ phản hồi API giỏ hàng
      */
     _applyCart(cart) {
+        const payload = cart?.data ?? cart; // backend may wrap response in { success, data, message }
+
         set({
-            items: cart.items ?? [],
-            totalPrice: cart.totalPrice ?? 0,
-            itemCount: cart.itemCount ?? 0,
+            items: payload?.items ?? [],
+            totalPrice: payload?.totalPrice ?? 0,
+            itemCount: payload?.itemCount ?? 0,
         });
     },
 
@@ -63,8 +65,14 @@ export const useCartStore = create((set, get) => ({
         set({ loading: true, error: null });
         try {
             const cart = await getCartApi();
+
+            // eslint-disable-next-line no-console
+            console.log('[cartStore][loadCart][response]', cart);
+
             get()._applyCart(cart);
-        } catch {
+        } catch (err) {
+            // eslint-disable-next-line no-console
+            console.error('[cartStore][loadCart][error]', err);
             set({ error: 'Không thể tải giỏ hàng' });
         } finally {
             set({ loading: false });

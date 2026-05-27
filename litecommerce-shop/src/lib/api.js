@@ -35,6 +35,7 @@ const safeHeadersInfo = (config) => {
     return {
         hasAuthorization: true,
         authorizationStartsWithBearer: String(auth).startsWith('Bearer '),
+        authorizationValuePreview: String(auth).slice(0, 20) + '…',
     };
 };
 
@@ -44,6 +45,32 @@ api.interceptors.request.use((config) => {
     const token = getCookie(ACCESS_TOKEN_COOKIE_NAME);
 
     // eslint-disable-next-line no-console
+    console.log('[api][request-debug:before]', {
+        method: config?.method,
+        url: config?.url ? `${config.baseURL || ''}${config.url}` : config?.baseURL,
+        tokenInfo: { present: !!token, length: token?.length ?? 0 },
+        headers: safeHeadersInfo(config),
+        configHeadersKeys: Object.keys(config?.headers ?? {}),
+    });
+
+    if (token) {
+        // ensure headers object exists
+        if (!config.headers) config.headers = {};
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    // eslint-disable-next-line no-console
+    console.log('[api][request-debug:after]', {
+        method: config?.method,
+        url: config?.url ? `${config.baseURL || ''}${config.url}` : config?.baseURL,
+        tokenInfo: { present: !!token, length: token?.length ?? 0 },
+        headers: safeHeadersInfo(config),
+        configHeadersKeys: Object.keys(config?.headers ?? {}),
+        Authorization: config?.headers?.Authorization || config?.headers?.authorization || null,
+    });
+
+    // keep original log for compatibility
+    // eslint-disable-next-line no-console
     console.log('[api][request]', {
         method: config?.method,
         url: config?.url ? `${config.baseURL || ''}${config.url}` : config?.baseURL,
@@ -51,9 +78,6 @@ api.interceptors.request.use((config) => {
         headers: safeHeadersInfo(config),
     });
 
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
     return config;
 });
 

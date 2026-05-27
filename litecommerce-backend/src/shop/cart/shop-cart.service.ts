@@ -17,15 +17,40 @@ export class ShopCartService {
   }
 
   async getCart(userId: number): Promise<CartResponseDto> {
-    return this.cartCoreService.getCart(this.getCartKey(userId));
+    const cart = await this.cartCoreService.getCart(this.getCartKey(userId));
+
+    // eslint-disable-next-line no-console
+    console.log('\n[shop-cart][getCart]\n', {
+      userId,
+      itemCount: cart?.itemCount,
+      totalPrice: cart?.totalPrice,
+    });
+
+    return cart;
   }
 
   async addToCart(userId: number, addToCartDto: AddToCartDto): Promise<CartResponseDto> {
-    return this.cartCoreService.addItem(
+    // eslint-disable-next-line no-console
+    console.log('\n[shop-cart][addToCart][request]\n', {
+      userId,
+      productId: addToCartDto?.productId,
+      quantity: addToCartDto?.quantity,
+    });
+
+    const cart = await this.cartCoreService.addItem(
       this.getCartKey(userId),
       addToCartDto.productId,
       addToCartDto.quantity,
     );
+
+    // eslint-disable-next-line no-console
+    console.log('\n[shop-cart][addToCart][result]\n', {
+      userId,
+      itemCount: cart?.itemCount,
+      totalPrice: cart?.totalPrice,
+    });
+
+    return cart;
   }
 
   async updateCartItem(userId: number, productId: number, quantity: number): Promise<CartResponseDto> {
