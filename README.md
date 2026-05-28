@@ -73,20 +73,6 @@ npm install
 npm run dev
 ```
 
----
-
-## Repository notes (.gitignore, docs, and ignored artifacts)
-`Introduce.md` mentions that some documentation-related items were commented out in `.gitignore` so you can read them. In particular, `.gitignore` includes commented-out entries for things like:
-- `.agents/`
-- `.claude/`
-- `AGENTS.md`
-- `CLAUDE.md`
-- `resources/` (and related error/log artifacts)
-
-These directories/files may be used for AI-agent workflow context and session logs, but are not necessarily required for the application to run.
-
----
-
 ## Current branch context
 `Introduce.md` indicates development is happening on:
 - `feature-backend+shop`
