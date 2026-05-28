@@ -102,7 +102,7 @@ export default function Cart() {
 
                                 {/* Thông tin */}
                                 <div className="grow min-w-0">
-                                    <h3 className="font-bold text-[#191c1e] whitespace-normal break-words">{item.productName}</h3>
+                                    <h3 className="font-bold text-[#191c1e] whitespace-normal wrap-break-word">{item.productName}</h3>
                                     <p className="text-sm text-outline">{item.unit}</p>
                                     <p className="text-primary font-bold mt-1">{formatPrice(item.price)}</p>
                                 </div>
