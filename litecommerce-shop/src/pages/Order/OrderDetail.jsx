@@ -21,9 +21,6 @@ function formatDate(dt) {
 
 const steps = [
     { key: 'orderTime', label: 'Đặt hàng thành công', icon: 'shopping_bag', pendingIcon: 'schedule' },
-    { key: 'acceptTime', label: 'Đã duyệt đơn', icon: 'done', pendingIcon: 'schedule' },
-    { key: 'shippedTime', label: 'Đang giao hàng', icon: 'done', pendingIcon: 'local_shipping' },
-    { key: 'finishedTime', label: 'Hoàn tất', icon: 'done', pendingIcon: 'task_alt' },
 ];
 
 export default function OrderDetail() {
@@ -36,11 +33,15 @@ export default function OrderDetail() {
     const successMsg = location.state?.success;
 
     // ─── Lấy chi tiết đơn hàng từ API ─────────────────────────────────────────
-    const { data: order, isLoading, isError } = useQuery({
+    const { data, isLoading, isError } = useQuery({
         queryKey: ['order-detail', id],
         queryFn: () => getOrderDetailApi(id),
         enabled: isAuthenticated && !!id,
     });
+
+    // Backend có thể trả về shape: { success, data: {...} }
+    // hoặc trực tiếp: {...}
+    const order = data?.data ?? data;
 
     if (!isAuthenticated) {
         navigate('/login', { state: { from: `/orders/detail/${id}` } });
@@ -79,9 +80,9 @@ export default function OrderDetail() {
         );
     }
 
-    const totalAmount = (order.details || []).reduce((sum, d) => sum + d.salePrice * d.quantity, 0);
+    const totalAmount = (order.orderDetails || []).reduce((sum, d) => sum + d.salePrice * d.quantity, 0);
     // Chỉ cho phép hủy khi đơn mới (1) hoặc đã duyệt (2)
-    const canCancel = order.orderStatus === 1 || order.orderStatus === 2;
+    const canCancel = order.status === 1 || order.status === 2;
 
     return (
         <div className="max-w-4xl mx-auto px-6 py-12">
@@ -107,7 +108,7 @@ export default function OrderDetail() {
                         <div className="flex items-start justify-between mb-8">
                             <div>
                                 <p className="text-sm font-bold text-outline uppercase tracking-wider mb-2">Trạng thái</p>
-                                <OrderStatusBadge status={order.orderStatus} />
+                                <OrderStatusBadge status={order.status ?? order.orderStatus} />
                             </div>
                             <div className="text-right">
                                 <p className="text-sm font-bold text-outline uppercase tracking-wider mb-1">Ngày đặt</p>
@@ -134,7 +135,7 @@ export default function OrderDetail() {
                             <h2 className="font-bold text-lg">Sản phẩm đã đặt</h2>
                         </div>
                         <div className="divide-y divide-outline-variant/30">
-                            {(order.details || []).map((item, i) => (
+                            {(order.orderDetails || []).map((item, i) => (
                                 <div key={i} className="p-6 flex items-center gap-4">
                                     <div className="w-16 h-16 bg-surface-container rounded-lg flex items-center justify-center overflow-hidden shrink-0">
                                         {item.photo ? (

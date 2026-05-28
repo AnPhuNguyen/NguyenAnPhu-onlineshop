@@ -37,8 +37,12 @@ export default function OrderList() {
         enabled: isAuthenticated,
     });
 
-    const orders = data?.orders ?? [];
-    const pagination = data?.pagination ?? { page: 1, totalPages: 1, total: 0 };
+    // Backend có thể trả về shape: { success, data: { orders, pagination } }
+    // hoặc: { orders, pagination } tùy controller/axios interceptors.
+    const orders = data?.orders ?? data?.data?.orders ?? [];
+    const pagination = data?.pagination ?? data?.data?.pagination ?? { page: 1, totalPages: 1, total: 0 };
+
+    console.log('\n[OrderList debug] data =', data, '\n[OrderList debug] orders.length =', orders?.length);
 
     if (!isAuthenticated) {
         navigate('/login', { state: { from: '/orders' } });
@@ -112,7 +116,7 @@ export default function OrderList() {
                                     </p>
                                 </div>
                                 <div className="flex items-center gap-4 shrink-0">
-                                    <OrderStatusBadge status={order.orderStatus} />
+                                    <OrderStatusBadge status={order.status ?? order.orderStatus} />
                                     <Link
                                         to={`/orders/detail/${order.orderId}`}
                                         className="text-primary font-bold text-sm px-4 py-2 hover:bg-surface-container-low rounded-lg transition-all flex items-center gap-1 group-hover:gap-2"
