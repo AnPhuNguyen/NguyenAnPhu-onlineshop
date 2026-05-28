@@ -27,6 +27,13 @@ export class JwtAuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const token = this.extractTokenFromHeader(request);
 
+    // eslint-disable-next-line no-console
+    console.log('\n[jwt-auth][canActivate][tokenExtract]\n', {
+      tokenPresent: !!token,
+      tokenLength: token?.length ?? 0,
+      authorizationHeaderPresent: !!(request?.headers?.authorization || request?.headers?.Authorization),
+    });
+
     if (!token) {
       throw new UnauthorizedException('Token not found');
     }
@@ -37,17 +44,38 @@ export class JwtAuthGuard implements CanActivate {
         secret: process.env.JWT_SECRET || 'your-secret-key',
       });
       request['user'] = payload;
+
+      // eslint-disable-next-line no-console
+      console.log('\n[jwt-auth][canActivate][verified]\n', {
+        userId: (payload as any)?.userId,
+        roles: (payload as any)?.roles,
+        userType: (payload as any)?.userType,
+      });
+
       return true;
-    } catch {
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('\n[jwt-auth][canActivate][verifyFailed]\n', { message: (e as any)?.message });
       throw new UnauthorizedException('Invalid or expired token');
     }
   }
 
   /**
    * Trích xuất JWT token từ Authorization header dạng Bearer
+   * - case-insensitive header name
+   * - tolerate multiple spaces
    */
   private extractTokenFromHeader(request: any): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+    const headers = request?.headers ?? {};
+    const authHeader = headers.authorization ?? headers.Authorization;
+
+    if (!authHeader || typeof authHeader !== 'string') return undefined;
+
+    // Expected: "Bearer <token>"
+    const [scheme, ...rest] = authHeader.trim().split(/\s+/);
+    if (!scheme || scheme.toLowerCase() !== 'bearer') return undefined;
+
+    const token = rest.join(' ').trim();
+    return token || undefined;
   }
 }

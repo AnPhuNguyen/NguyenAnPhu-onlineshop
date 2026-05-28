@@ -61,10 +61,12 @@ export class OrderItemDto {
 export class CreateOrderDto {
   /**
    * Danh sách sản phẩm trong đơn hàng
+   * Lưu ý: ShopOrdersService sẽ lấy items từ cart server-side nên không bắt buộc từ client.
    */
-  @ApiProperty({ example: [{ productId: 1, quantity: 2 }] })
+  @ApiPropertyOptional({ example: [{ productId: 1, quantity: 2 }] })
+  @IsOptional()
   @ArrayNotEmpty({ message: 'Danh sách sản phẩm không được rỗng' })
-  items: OrderItemDto[];
+  items?: OrderItemDto[];
 
   /**
    * Tỉnh giao hàng

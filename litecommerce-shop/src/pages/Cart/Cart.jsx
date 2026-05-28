@@ -1,23 +1,33 @@
-// src/pages/Cart.jsx
-import { Link, useNavigate } from 'react-router-dom';
+// src/pages/Cart/Cart.jsx
+/**
+ * Trang giỏ hàng – đồng bộ với session trên backend
+ */
+import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useCartStore } from '../../store/cartStore';
 import { useAuthStore } from '../../store/authStore';
 
 function formatPrice(price) {
-    return price.toLocaleString('vi-VN') + '₫';
+    return Number(price).toLocaleString('vi-VN') + '₫';
 }
 
 export default function Cart() {
-    const { items, updateQuantity, removeItem, clearCart, getSubtotal } = useCartStore();
+    const { items, updateQuantity, removeItem, clearCart, getSubtotal, loadCart, loading } = useCartStore();
     const { isAuthenticated } = useAuthStore();
-    const navigate = useNavigate();
     const subtotal = getSubtotal();
+
+    // Tải thông tin giỏ hàng từ server khi mount
+    useEffect(() => {
+        if (isAuthenticated) {
+            loadCart();
+        }
+    }, [isAuthenticated, loadCart]);
 
     if (!isAuthenticated) {
         return (
             <div className="max-w-6xl mx-auto px-6 py-20 text-center">
-                <span className="material-symbols-outlined text-7xl text-[#737686]">shopping_cart</span>
-                <p className="text-xl font-medium text-[#737686] mt-4 mb-6">
+                <span className="material-symbols-outlined text-7xl text-outline">shopping_cart</span>
+                <p className="text-xl font-medium text-outline mt-4 mb-6">
                     Vui lòng đăng nhập để xem giỏ hàng
                 </p>
                 <Link
@@ -31,6 +41,15 @@ export default function Cart() {
         );
     }
 
+    if (loading && items.length === 0) {
+        return (
+            <div className="max-w-6xl mx-auto px-6 py-20 flex flex-col items-center gap-4 text-outline">
+                <span className="material-symbols-outlined text-6xl animate-spin">progress_activity</span>
+                <p className="font-medium">Đang tải giỏ hàng...</p>
+            </div>
+        );
+    }
+
     return (
         <div className="max-w-6xl mx-auto px-6 py-12">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
@@ -39,8 +58,12 @@ export default function Cart() {
                 </h1>
                 {items.length > 0 && (
                     <button
-                        onClick={clearCart}
-                        className="w-fit text-[#ba1a1a] hover:bg-[#ffdad6]/50 px-4 py-2 rounded-xl border border-[#ba1a1a]/20 flex items-center gap-2 font-bold transition-all active:scale-95"
+                        onClick={() => {
+                            if (window.confirm('Bạn có chắc muốn xóa toàn bộ giỏ hàng?')) {
+                                clearCart();
+                            }
+                        }}
+                        className="w-fit text-error hover:bg-error-container/50 px-4 py-2 rounded-xl border border-error/20 flex items-center gap-2 font-bold transition-all active:scale-95"
                     >
                         <span className="material-symbols-outlined text-xl">delete_sweep</span>
                         Xóa toàn bộ giỏ hàng
@@ -49,7 +72,7 @@ export default function Cart() {
             </div>
 
             {items.length === 0 ? (
-                <div className="flex flex-col items-center justify-center min-h-64 text-[#737686] gap-4">
+                <div className="flex flex-col items-center justify-center min-h-64 text-outline gap-4">
                     <span className="material-symbols-outlined text-7xl">shopping_cart</span>
                     <p className="text-xl font-medium">Giỏ hàng của bạn đang trống</p>
                     <Link
@@ -61,55 +84,58 @@ export default function Cart() {
                 </div>
             ) : (
                 <div className="flex flex-col lg:flex-row gap-10">
-                    {/* Cart items */}
-                    <div className="flex-grow space-y-4">
+                    {/* Danh sách sản phẩm */}
+                    <div className="grow space-y-4">
                         {items.map((item) => (
                             <div
                                 key={item.productId}
                                 className="bg-white rounded-xl p-5 flex items-center gap-5 ambient-shadow"
                             >
-                                {/* Photo */}
-                                <div className="w-20 h-20 flex-shrink-0 bg-[#eceef0] rounded-lg flex items-center justify-center overflow-hidden">
+                                {/* Ảnh */}
+                                <div className="w-20 h-20 shrink-0 bg-surface-container rounded-lg flex items-center justify-center overflow-hidden">
                                     {item.photo ? (
                                         <img src={item.photo} alt={item.productName} className="object-cover w-full h-full" />
                                     ) : (
-                                        <span className="material-symbols-outlined text-3xl text-[#737686]">inventory_2</span>
+                                        <span className="material-symbols-outlined text-3xl text-outline">inventory_2</span>
                                     )}
                                 </div>
 
-                                {/* Info */}
-                                <div className="flex-grow min-w-0">
-                                    <h3 className="font-bold text-[#191c1e] truncate">{item.productName}</h3>
-                                    <p className="text-sm text-[#737686]">{item.unit}</p>
-                                    <p className="text-[#004ac6] font-bold mt-1">{formatPrice(item.price)}</p>
+                                {/* Thông tin */}
+                                <div className="grow min-w-0">
+                                    <h3 className="font-bold text-[#191c1e] whitespace-normal break-words">{item.productName}</h3>
+                                    <p className="text-sm text-outline">{item.unit}</p>
+                                    <p className="text-primary font-bold mt-1">{formatPrice(item.price)}</p>
                                 </div>
 
-                                {/* Quantity */}
-                                <div className="flex items-center border border-[#c3c6d7] rounded-xl overflow-hidden">
+                                {/* Số lượng */}
+                                <div className="flex items-center border border-outline-variant rounded-xl overflow-hidden shrink-0 w-28 sm:w-32">
                                     <button
                                         onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                                        className="px-3 py-2 hover:bg-[#f2f4f6] transition-colors font-bold"
+                                        className="px-3 py-2 hover:bg-surface-container-low transition-colors font-bold"
+                                        disabled={loading}
                                     >
                                         −
                                     </button>
-                                    <span className="px-3 font-bold min-w-[2rem] text-center">{item.quantity}</span>
+                                    <span className="px-2 font-bold min-w-10 text-center">{item.quantity}</span>
                                     <button
                                         onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                                        className="px-3 py-2 hover:bg-[#f2f4f6] transition-colors font-bold"
+                                        className="px-3 py-2 hover:bg-surface-container-low transition-colors font-bold"
+                                        disabled={loading}
                                     >
                                         +
                                     </button>
                                 </div>
 
-                                {/* Line total */}
-                                <div className="text-right min-w-[120px]">
+                                {/* Thành tiền */}
+                                <div className="text-right shrink-0 w-24 sm:w-28">
                                     <p className="font-black text-[#191c1e]">{formatPrice(item.price * item.quantity)}</p>
                                 </div>
 
-                                {/* Remove */}
+                                {/* Xóa */}
                                 <button
                                     onClick={() => removeItem(item.productId)}
-                                    className="text-[#ba1a1a] hover:bg-[#ffdad6] p-2 rounded-full transition-all"
+                                    className="text-error hover:bg-error-container p-2 rounded-full transition-all"
+                                    disabled={loading}
                                 >
                                     <span className="material-symbols-outlined">delete</span>
                                 </button>
@@ -117,33 +143,33 @@ export default function Cart() {
                         ))}
                     </div>
 
-                    {/* Summary */}
-                    <div className="lg:w-80 flex-shrink-0">
+                    {/* Tóm tắt */}
+                    <div className="w-full lg:w-80 shrink-0">
                         <div className="bg-white rounded-xl p-8 ambient-shadow sticky top-28">
                             <h2 className="text-xl font-bold mb-6">Tóm tắt</h2>
-                            <div className="space-y-3 border-b border-[#c3c6d7] pb-5 mb-5">
+                            <div className="space-y-3 border-b border-outline-variant pb-5 mb-5">
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-[#737686]">Tạm tính</span>
+                                    <span className="text-outline">Tạm tính</span>
                                     <span className="font-bold">{formatPrice(subtotal)}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
-                                    <span className="text-[#737686]">Phí vận chuyển</span>
+                                    <span className="text-outline">Phí vận chuyển</span>
                                     <span className="font-bold text-green-600">Miễn phí</span>
                                 </div>
                             </div>
                             <div className="flex justify-between font-black text-lg mb-8">
                                 <span>Tổng cộng</span>
-                                <span className="text-[#004ac6]">{formatPrice(subtotal)}</span>
+                                <span className="text-primary">{formatPrice(subtotal)}</span>
                             </div>
                             <Link
                                 to="/checkout"
-                                className="block w-full primary-gradient text-white py-4 rounded-xl font-bold text-center text-lg ambient-shadow hover:opacity-90 transition-all"
+                                className="block w-full primary-gradient text-white py-4 rounded-xl font-bold text-center text-lg ambient-shadow hover:opacity-90 transition-all shadow-lg shadow-blue-500/20"
                             >
                                 Thanh toán
                             </Link>
                             <Link
                                 to="/products"
-                                className="block text-center text-[#004ac6] font-bold mt-4 hover:underline"
+                                className="block text-center text-primary font-bold mt-4 hover:underline"
                             >
                                 Tiếp tục mua hàng
                             </Link>

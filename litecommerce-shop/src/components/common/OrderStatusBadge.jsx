@@ -1,10 +1,12 @@
 // src/components/common/OrderStatusBadge.jsx
-import { ORDER_STATUS } from '../../data/mockData';
+// Badge hiển thị trạng thái đơn hàng với màu sắc tương ứng
+import { getStatusInfo } from '../../data/orderStatus';
 
 export default function OrderStatusBadge({ status }) {
-    const info = ORDER_STATUS[String(status)] || { label: 'Không xác định', color: 'bg-gray-100 text-gray-700' };
+    const info = getStatusInfo(status);
+
     return (
-        <span className={`px-3 py-1 rounded-full text-xs font-bold ${info.color}`}>
+        <span className={`px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider ${info.color}`}>
             {info.label}
         </span>
     );

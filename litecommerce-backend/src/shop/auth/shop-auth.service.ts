@@ -47,6 +47,12 @@ export class ShopAuthService {
       email: customer.email,
       roles: ['customer'],
       userType: 'customer',
+
+      // Thông tin hồ sơ để frontend tự đổ dữ liệu
+      customerName: customer.customerName,
+      phone: customer.phone,
+      province: customer.province,
+      address: customer.address,
     };
 
     return {
@@ -56,6 +62,14 @@ export class ShopAuthService {
         email: customer.email,
         roles: ['customer'],
         userType: 'customer',
+
+        // Theo naming frontend đang dùng: customerName/phone/province/address
+        customerName: customer.customerName,
+        phone: customer.phone,
+        province: customer.province,
+        address: customer.address,
+
+        // Giữ lại fullName để không phá các nơi khác (nếu có)
         fullName: customer.customerName,
       },
     };
