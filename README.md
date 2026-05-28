@@ -1,81 +1,132 @@
-# README — LiteCommerce (Monorepo)
+# LiteCommerce (Shop + Admin + Backend)
 
-## What this project is
-**LiteCommerce** is a multi-project monorepo for an online shopping system containing:
-- **Shop frontend** (`litecommerce-shop/`): customer-facing React/Vite app
-- **Admin frontend** (`litecommerce-admin/`): staff/admin React/Vite app
-- **Backend API** (`litecommerce-backend/`): NestJS REST API serving the app(s)
+This repository is a multi-project monorepo for an online shop system called **LiteCommerce**, composed of:
 
-Project context and domain vocabulary are documented here:
-- `CONTEXT-MAP.md` (overview of Shop/Admin/Backend contexts)
-- `litecommerce-shop/CONTEXT.md`, `litecommerce-admin/CONTEXT.md`, `litecommerce-backend/CONTEXT.md` (glossaries)
+- **Shop (Customer Frontend)**: `litecommerce-shop/` (React + Vite)
+- **Admin (Employee/Manager Frontend)**: `litecommerce-admin/` (React + Vite)
+- **Backend (API)**: `litecommerce-backend/` (NestJS)
 
-Functional requirements and user flows (Vietnamese) are described in:
-- `resources/guide.txt`
-
-Database structure reference:
-- `resources/db_diagram.txt`
-
-Static/lookup lists:
-- `resources/orderstatus.txt`
-- `resources/provinces.txt`
-
-Session/iteration summaries from prior AI agent runs:
-- `resources/agent_session_done/`
+See:
+- `Introduce.md` for the high-level repo overview
+- `CONTEXT-MAP.md` and each subproject `CONTEXT.md` for deeper context
 
 ---
 
 ## What has been achieved so far
-### Codebase structure exists (Shop + Admin + Backend)
-- Frontend apps are present and runnable as separate Vite projects:
-  - `litecommerce-shop/`
-  - `litecommerce-admin/`
-- A NestJS backend project exists at:
-  - `litecommerce-backend/`
 
-### Shop frontend improvements (2026-05-28 session)
-From `resources/agent_session_done/2026-05-28_shop-frontend-adjustments_summary.md`, the shop frontend UI was adjusted to fix:
-1. **Cart (`/cart`) layout issues**
-   - Quantity controls remain usable on smaller viewports.
-   - Product name wrapping prevents cart layout from pushing other UI sections out of bounds.
-   - Key file:
-     - `litecommerce-shop/src/pages/Cart/Cart.jsx`
-2. **Profile “Đổi mật khẩu” inline behavior**
-   - “Đổi mật khẩu” now swaps inline content inside `Profile` instead of navigating away to a dedicated route.
-   - Key files:
-     - `litecommerce-shop/src/pages/Account/Profile.jsx`
-     - Added `litecommerce-shop/src/pages/Account/ChangePasswordInline.jsx`
+### Shop frontend (recent adjustments)
+Based on the latest recorded session **2026-05-28** (`resources/agent_session_done/2026-05-28_shop-frontend-adjustments_summary.md`), the Shop UI was improved in:
+
+- **Cart UI**
+  - Fixed layout/UX issues around **changing quantities** (`litecommerce-shop/src/pages/Cart/Cart.jsx`)
+  - Improved text wrapping for long product names
+  - Stabilized quantity control sizing on small viewports
+- **Profile → Inline Change Password**
+  - Changed “Đổi mật khẩu” behavior to **swap inline content** instead of navigating away (`litecommerce-shop/src/pages/Account/Profile.jsx`)
+  - Added a dedicated component for the inline view:
+    - `litecommerce-shop/src/pages/Account/ChangePasswordInline.jsx`
 
 ---
 
-## Setup & run
+## Roles & key user flows (from project docs)
 
-> This is a monorepo. Each sub-project is run independently.
+From `resources/guide.txt`, the system supports two major user types:
 
-### 1) Backend (NestJS)
-Go to `litecommerce-backend/` and run:
+### Customers
+- Login / registration (password stored as **MD5** in this project context)
+- Product browsing + search/filter
+- Cart management (add/edit quantity, remove items)
+- Order placement and order status viewing
+- Customer can cancel orders when allowed by the status flow
+
+### Employees / Admin
+- Login with role gating (`employee` / `employee,admin`)
+- CRUD modules for products, product attributes, product photos, shippers, suppliers, employees, customers
+- Order management and **controlled status transitions** following the defined workflow
+
+---
+
+## Database setup
+
+The repository includes a MySQL/MariaDB dump at the repo root:
+
+- `litecommercedb.sql`
+
+### 1) Create / import the database
+1. Start MySQL/MariaDB.
+2. Import the dump:
+
 ```bash
+# Example (adjust credentials / port as needed):
+mysql -u <user> -p < litecommercedb.sql
+```
+
+> Notes:
+> - The dump contains logic to make the import safer when the database doesn’t exist yet (`CREATE DATABASE IF NOT EXISTS` + `USE` are included).
+
+### 2) Verify backend connectivity
+Before running the backend, ensure the database credentials/config match the backend’s expected settings (see `litecommerce-backend/CONTEXT.md` / backend config files).
+
+---
+
+## How to set up & run
+
+This monorepo is designed so you run each subproject independently.
+
+### 0) Prerequisites
+- Node.js (for `litecommerce-shop` and `litecommerce-admin`)
+- Node.js + npm (for `litecommerce-backend`)
+- MySQL/MariaDB (for the backend)
+- (Optional) a browser to test the frontends
+
+---
+
+## 1) Run Backend (NestJS)
+
+From the repo root:
+
+```bash
+cd litecommerce-backend
 npm install
 npm run start
 ```
 
-### 2) Shop frontend (React/Vite)
-Go to `litecommerce-shop/` and run:
+---
+
+## 2) Run Shop frontend (React/Vite)
+
+From the repo root:
+
 ```bash
+cd litecommerce-shop
 npm install
 npm run dev
 ```
-
-### 3) Admin frontend (optional)
-Go to `litecommerce-admin/` and run:
-```bash
-npm install
-npm run dev
-```
-
-## Current branch context
-`Introduce.md` indicates development is happening on:
-- `feature-backend+shop`
-to integrate backend with the shop frontend.
 
 ---
+
+## 3) Run Admin frontend (React/Vite)
+
+From the repo root:
+
+```bash
+cd litecommerce-admin
+npm install
+npm run dev
+```
+
+---
+
+## Ignored/generated files
+
+Some folders/files are excluded from version control (typically generated artifacts, local caches, large/temporary content). They are intentionally not documented individually here—focus on the instructions above and the code under `litecommerce-shop/`, `litecommerce-admin/`, and `litecommerce-backend/`.
+
+---
+
+## References
+
+- `Introduce.md`
+- `CONTEXT-MAP.md`
+- `resources/guide.txt`
+- `resources/db_diagram.txt`
+- `resources/agent_session_done/*` (session summaries of what was changed)

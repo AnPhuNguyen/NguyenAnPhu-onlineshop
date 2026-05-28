@@ -2,7 +2,11 @@
 --
 -- Host: localhost    Database: litecommercedb
 -- ------------------------------------------------------
--- Server version	8.0.46
+-- Server version       8.0.46
+
+-- Ensure database exists
+CREATE DATABASE IF NOT EXISTS `litecommercedb`;
+USE `litecommercedb`;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
