@@ -20,7 +20,20 @@ export const useOrderStore = create((set) => ({
         set({ loading: true, error: null });
         try {
             const response = await createOrderApi(data);
-            return { success: true, orderId: response.orderId };
+
+            // Backend trả về dạng: { success: true, data: { message, orderId }, ... }
+            // Hoặc đôi khi có thể chỉ trả về data khác nhau tùy theo wrapper.
+            const orderId =
+                response?.orderId ??
+                response?.data?.orderId ??
+                response?.data?.data?.orderId;
+
+            return {
+                success: true,
+                orderId,
+                message: response?.message ?? response?.data?.message ?? 'Tạo thành công',
+                raw: response,
+            };
         } catch (err) {
             const message = err.response?.data?.message || 'Không thể đặt hàng';
             set({ error: message });

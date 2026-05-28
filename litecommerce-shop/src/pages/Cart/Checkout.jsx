@@ -44,8 +44,22 @@ export default function Checkout() {
         const result = await createOrder({ deliveryProvince, deliveryAddress });
 
         if (result.success) {
+            const orderId =
+                result?.orderId ??
+                result?.data?.orderId ??
+                result?.data?.data?.orderId;
+
+            if (!orderId) {
+                console.warn('\n[checkout] orderId not found in createOrder response:', result);
+                setErrorMsg('Không lấy được mã đơn hàng sau khi đặt hàng.');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                return;
+            }
+
             resetLocal(); // Xóa giỏ hàng local sau khi đặt hàng thành công
-            navigate(`/orders/detail/${result.orderId}`, { state: { success: 'Đặt hàng thành công! Cảm ơn bạn đã mua sắm tại LiteCommerce.' } });
+            navigate(`/orders/detail/${orderId}`, {
+                state: { success: 'Đặt hàng thành công! Cảm ơn bạn đã mua sắm tại LiteCommerce.' }
+            });
         } else {
             setErrorMsg(result.message);
             window.scrollTo({ top: 0, behavior: 'smooth' });
