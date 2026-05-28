@@ -19,6 +19,15 @@ export default function Profile() {
 
     useEffect(() => {
         console.log('[Profile] auth state', { isAuthenticated, user });
+
+        if (user && typeof user === 'object') {
+            setForm({
+                customerName: user.customerName ?? '',
+                phone: user.phone ?? '',
+                province: user.province ?? '',
+                address: user.address ?? '',
+            });
+        }
     }, [isAuthenticated, user]);
 
     useEffect(() => {
