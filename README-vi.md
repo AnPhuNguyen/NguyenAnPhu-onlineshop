@@ -90,18 +90,6 @@ npm run dev
 
 ---
 
-## Ghi chú về các tài liệu/nhân tố phụ (liên quan .gitignore)
-Trong `Introduce.md` có ghi chú rằng một số mục liên quan tài liệu/tri thức (documentation/knowledge-graph context) đã được **comment trong `.gitignore`** để bạn có thể đọc chúng. Vì vậy có thể gặp các thư mục/tệp như:
-- `.agents/`
-- `.claude/`
-- `AGENTS.md`
-- `CLAUDE.md`
-- các log/error trong `resources/`
-
-Các nội dung này hỗ trợ quá trình phát triển/ghi nhận phiên làm việc AI, nhưng không nhất thiết là bắt buộc để chạy ứng dụng.
-
----
-
 ## Nhánh đang làm việc (Branch context)
 `Introduce.md` cho biết dự án đang phát triển trên:
 - `feature-backend+shop`
