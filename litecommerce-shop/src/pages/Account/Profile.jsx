@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { PROVINCES } from '../../data/mockData';
+import ChangePasswordInline from './ChangePasswordInline';
 
 export default function Profile() {
     const { user, isAuthenticated, updateProfile } = useAuthStore();
@@ -16,6 +17,7 @@ export default function Profile() {
         address: '',
     });
     const [success, setSuccess] = useState('');
+    const [activeSection, setActiveSection] = useState('profile');
 
     useEffect(() => {
         console.log('[Profile] auth state', { isAuthenticated, user });
@@ -69,10 +71,19 @@ export default function Profile() {
                         <p className="text-sm text-outline">{user?.email}</p>
                     </div>
                     <nav className="space-y-2">
-                        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#b4c5ff] text-primary font-bold">
+                        <button
+                            type="button"
+                            onClick={() => setActiveSection('profile')}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors text-left cursor-pointer ${
+                                activeSection === 'profile'
+                                    ? 'bg-[#b4c5ff] text-primary'
+                                    : 'text-[#191c1e] hover:bg-surface-container-low'
+                            }`}
+                        >
                             <span className="material-symbols-outlined">person</span>
                             Thông tin cá nhân
-                        </div>
+                        </button>
+
                         <Link
                             to="/orders"
                             className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#191c1e] hover:bg-surface-container-low font-medium transition-colors"
@@ -80,90 +91,100 @@ export default function Profile() {
                             <span className="material-symbols-outlined">receipt_long</span>
                             Đơn hàng của tôi
                         </Link>
-                        <Link
-                            to="/change-password"
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl text-[#191c1e] hover:bg-surface-container-low font-medium transition-colors"
+
+                        <button
+                            type="button"
+                            onClick={() => setActiveSection('change-password')}
+                            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors text-left cursor-pointer ${
+                                activeSection === 'change-password'
+                                    ? 'bg-[#b4c5ff] text-primary'
+                                    : 'text-[#191c1e] hover:bg-surface-container-low'
+                            }`}
                         >
                             <span className="material-symbols-outlined">lock_reset</span>
                             Đổi mật khẩu
-                        </Link>
+                        </button>
                     </nav>
                 </div>
 
                 {/* Form */}
                 <div className="grow">
-                    <form onSubmit={handleSubmit} className="bg-white rounded-xl p-8 ambient-shadow">
-                        <h2 className="text-xl font-bold mb-6">Cập nhật thông tin</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Full name */}
-                            <div className="md:col-span-2">
-                                <label className="text-sm font-bold text-outline block mb-2">
-                                    Họ tên <span className="text-error">*</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={form.customerName}
-                                    onChange={(e) => setForm({ ...form, customerName: e.target.value })}
-                                    className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant focus:border-primary focus:ring-0 outline-none text-sm font-medium transition-all"
-                                />
+                    {activeSection === 'profile' ? (
+                        <form onSubmit={handleSubmit} className="bg-white rounded-xl p-8 ambient-shadow">
+                            <h2 className="text-xl font-bold mb-6">Cập nhật thông tin</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Full name */}
+                                <div className="md:col-span-2">
+                                    <label className="text-sm font-bold text-outline block mb-2">
+                                        Họ tên <span className="text-error">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={form.customerName}
+                                        onChange={(e) => setForm({ ...form, customerName: e.target.value })}
+                                        className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant focus:border-primary focus:ring-0 outline-none text-sm font-medium transition-all"
+                                    />
+                                </div>
+                                {/* Email (readonly) */}
+                                <div className="md:col-span-2">
+                                    <label className="text-sm font-bold text-outline block mb-2">Email</label>
+                                    <input
+                                        type="email"
+                                        readOnly
+                                        value={user?.email}
+                                        className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant text-sm font-medium text-outline cursor-not-allowed"
+                                    />
+                                </div>
+                                {/* Phone */}
+                                <div>
+                                    <label className="text-sm font-bold text-outline block mb-2">Điện thoại</label>
+                                    <input
+                                        type="tel"
+                                        value={form.phone}
+                                        onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                                        placeholder="Số điện thoại"
+                                        className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant focus:border-primary focus:ring-0 outline-none text-sm font-medium transition-all"
+                                    />
+                                </div>
+                                {/* Province */}
+                                <div>
+                                    <label className="text-sm font-bold text-outline block mb-2">Tỉnh/Thành phố</label>
+                                    <select
+                                        value={form.province}
+                                        onChange={(e) => setForm({ ...form, province: e.target.value })}
+                                        className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant focus:border-primary focus:ring-0 outline-none text-sm font-medium transition-all"
+                                    >
+                                        <option value="">-- Chọn tỉnh/thành --</option>
+                                        {PROVINCES.map((p) => (
+                                            <option key={p} value={p}>{p}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                {/* Address */}
+                                <div className="md:col-span-2">
+                                    <label className="text-sm font-bold text-outline block mb-2">Địa chỉ</label>
+                                    <input
+                                        type="text"
+                                        value={form.address}
+                                        onChange={(e) => setForm({ ...form, address: e.target.value })}
+                                        placeholder="Số nhà, đường, phường/xã..."
+                                        className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant focus:border-primary focus:ring-0 outline-none text-sm font-medium transition-all"
+                                    />
+                                </div>
                             </div>
-                            {/* Email (readonly) */}
-                            <div className="md:col-span-2">
-                                <label className="text-sm font-bold text-outline block mb-2">Email</label>
-                                <input
-                                    type="email"
-                                    readOnly
-                                    value={user?.email}
-                                    className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant text-sm font-medium text-outline cursor-not-allowed"
-                                />
-                            </div>
-                            {/* Phone */}
-                            <div>
-                                <label className="text-sm font-bold text-outline block mb-2">Điện thoại</label>
-                                <input
-                                    type="tel"
-                                    value={form.phone}
-                                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                                    placeholder="Số điện thoại"
-                                    className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant focus:border-primary focus:ring-0 outline-none text-sm font-medium transition-all"
-                                />
-                            </div>
-                            {/* Province */}
-                            <div>
-                                <label className="text-sm font-bold text-outline block mb-2">Tỉnh/Thành phố</label>
-                                <select
-                                    value={form.province}
-                                    onChange={(e) => setForm({ ...form, province: e.target.value })}
-                                    className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant focus:border-primary focus:ring-0 outline-none text-sm font-medium transition-all"
+                            <div className="mt-8 flex justify-end">
+                                <button
+                                    type="submit"
+                                    className="primary-gradient text-white px-10 py-3 rounded-xl font-bold ambient-shadow hover:opacity-90 transition-all active:scale-95"
                                 >
-                                    <option value="">-- Chọn tỉnh/thành --</option>
-                                    {PROVINCES.map((p) => (
-                                        <option key={p} value={p}>{p}</option>
-                                    ))}
-                                </select>
+                                    Lưu thay đổi
+                                </button>
                             </div>
-                            {/* Address */}
-                            <div className="md:col-span-2">
-                                <label className="text-sm font-bold text-outline block mb-2">Địa chỉ</label>
-                                <input
-                                    type="text"
-                                    value={form.address}
-                                    onChange={(e) => setForm({ ...form, address: e.target.value })}
-                                    placeholder="Số nhà, đường, phường/xã..."
-                                    className="w-full bg-surface-container rounded-xl px-4 py-3 border border-outline-variant focus:border-primary focus:ring-0 outline-none text-sm font-medium transition-all"
-                                />
-                            </div>
-                        </div>
-                        <div className="mt-8 flex justify-end">
-                            <button
-                                type="submit"
-                                className="primary-gradient text-white px-10 py-3 rounded-xl font-bold ambient-shadow hover:opacity-90 transition-all active:scale-95"
-                            >
-                                Lưu thay đổi
-                            </button>
-                        </div>
-                    </form>
+                        </form>
+                    ) : (
+                        <ChangePasswordInline />
+                    )}
                 </div>
             </div>
         </div>

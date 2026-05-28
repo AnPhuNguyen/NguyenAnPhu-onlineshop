@@ -102,13 +102,13 @@ export default function Cart() {
 
                                 {/* Thông tin */}
                                 <div className="grow min-w-0">
-                                    <h3 className="font-bold text-[#191c1e] truncate">{item.productName}</h3>
+                                    <h3 className="font-bold text-[#191c1e] whitespace-normal break-words">{item.productName}</h3>
                                     <p className="text-sm text-outline">{item.unit}</p>
                                     <p className="text-primary font-bold mt-1">{formatPrice(item.price)}</p>
                                 </div>
 
                                 {/* Số lượng */}
-                                <div className="flex items-center border border-outline-variant rounded-xl overflow-hidden">
+                                <div className="flex items-center border border-outline-variant rounded-xl overflow-hidden shrink-0 w-28 sm:w-32">
                                     <button
                                         onClick={() => updateQuantity(item.productId, item.quantity - 1)}
                                         className="px-3 py-2 hover:bg-surface-container-low transition-colors font-bold"
@@ -116,7 +116,7 @@ export default function Cart() {
                                     >
                                         −
                                     </button>
-                                    <span className="px-3 font-bold min-w-8 text-center">{item.quantity}</span>
+                                    <span className="px-2 font-bold min-w-10 text-center">{item.quantity}</span>
                                     <button
                                         onClick={() => updateQuantity(item.productId, item.quantity + 1)}
                                         className="px-3 py-2 hover:bg-surface-container-low transition-colors font-bold"
@@ -127,7 +127,7 @@ export default function Cart() {
                                 </div>
 
                                 {/* Thành tiền */}
-                                <div className="text-right min-w-30">
+                                <div className="text-right shrink-0 w-24 sm:w-28">
                                     <p className="font-black text-[#191c1e]">{formatPrice(item.price * item.quantity)}</p>
                                 </div>
 
@@ -144,7 +144,7 @@ export default function Cart() {
                     </div>
 
                     {/* Tóm tắt */}
-                    <div className="lg:w-80 shrink-0">
+                    <div className="w-full lg:w-80 shrink-0">
                         <div className="bg-white rounded-xl p-8 ambient-shadow sticky top-28">
                             <h2 className="text-xl font-bold mb-6">Tóm tắt</h2>
                             <div className="space-y-3 border-b border-outline-variant pb-5 mb-5">
